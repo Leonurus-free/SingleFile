@@ -56,7 +56,7 @@
 		"description": "Command label: 'Custom shortcut #10'"
 	},
 	"menuSavePage": {
-		"message": "Save page with SingleFile",
+		"message": "Save page with 沧澜",
 		"description": "Menu entry: 'Save page with SingleFile'"
 	},
 	"menuSaveSelectedLinks": {
@@ -140,7 +140,7 @@
 		"description": "Menu entry: 'Auto-save' > Auto-save all tabs'"
 	},
 	"buttonDefaultTooltip": {
-		"message": "Save page with SingleFile",
+		"message": "Save page with 沧澜",
 		"description": "Button title: 'Save page with SingleFile'"
 	},
 	"buttonBlockedBadge": {
@@ -148,11 +148,11 @@
 		"description": "Button badge when the page is blocked: '🚫'"
 	},
 	"buttonBlockedTooltip": {
-		"message": "This page cannot be saved with SingleFile",
+		"message": "This page cannot be saved with 沧澜",
 		"description": "Button title: 'This page cannot be saved with SingleFile'"
 	},
 	"buttonInitializingTooltip": {
-		"message": "Initializing SingleFile",
+		"message": "Initializing 沧澜",
 		"description": "Button title during initialization: 'Initializing SingleFile (x/2)'"
 	},
 	"buttonInitializingBadge": {
@@ -592,7 +592,7 @@
 		"description": "Options page label: 'period (s)'"
 	},
 	"optionAutoSaveExternalSave": {
-		"message": "save the page with SingleFile Companion",
+		"message": "save the page with 沧澜 Companion",
 		"description": "Options page label: 'save the page with SingleFile Companion'"
 	},
 	"optionsEditorSubTitle": {
@@ -608,7 +608,7 @@
 		"description": "Options page label: 'open saved pages in a new tab'"
 	},
 	"optionAutoOpenEditor": {
-		"message": "open pages saved with SingleFile in the annotation editor",
+		"message": "open pages saved with 沧澜 in the annotation editor",
 		"description": "Options page label: 'open pages saved with SingleFile in the annotation editor'"
 	},
 	"optionDefaultEditorMode": {
@@ -708,7 +708,7 @@
 		"description": "Options page label: 'add proof of existence'"
 	},
 	"optionsAddProofConfirm": {
-		"message": "Confirm you allow SingleFile to send to the Woleet API a SHA256 hash of each page you are going to save. You can find more information about this feature in the help page or by clicking on the question mark next to the option.",
+		"message": "Confirm you allow 沧澜 to send to the Woleet API a SHA256 hash of each page you are going to save. You can find more information about this feature in the help page or by clicking on the question mark next to the option.",
 		"description": "Popup text displayed wen enabling the option 'add proof of existence'"
 	},
 	"optionWoleetKey": {
@@ -796,7 +796,7 @@
 		"description": "Options page label: 'authentication token'"
 	},
 	"optionSaveWithCompanion": {
-		"message": "save with SingleFile Companion",
+		"message": "save with 沧澜 Companion",
 		"description": "Options page label: 'save with SingleFile Companion'"
 	},
 	"optionSaveCreatedBookmarks": {
@@ -880,7 +880,7 @@
 		"description": "Width of the log panel in pixels, it should be adjusted for the longest label beginning with 'log' (e.g. 'logPanelDeferredImages')"
 	},
 	"topPanelError": {
-		"message": "SingleFile error: ",
+		"message": "沧澜 error: ",
 		"description": "Label 'SingleFile error: ' in the top panel when displaying an error message"
 	},
 	"topPanelEmbeddedImageButton": {

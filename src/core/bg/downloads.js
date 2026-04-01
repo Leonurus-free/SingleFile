@@ -71,6 +71,7 @@ export {
 	saveToRestFormApi,
 	saveToS3,
 	saveWithMCP,
+	saveToCanglang,
 	encodeSharpCharacter
 };
 
@@ -176,8 +177,20 @@ async function downloadTabPage(message, tab) {
 async function downloadContent(contents, tab, incognito, message) {
 	const tabId = tab.id;
 	try {
+		// 如果启用了沧澜平台保存，提前检查 Token
+		let canglangToken = null;
+		if (message.saveToCanglang) {
+			canglangToken = await getCanglangTokenFromStorage();
+			if (!canglangToken) {
+				// 发送 Toast 错误通知
+				await sendToastNotification(tabId, '未登录沧澜平台，请先登录后再试', 'error', 5000);
+				throw new Error(`未登录沧澜平台，请登录后重试`);
+			}
+		}
+
 		let skipped;
-		if (message.backgroundSave && !message.saveToGDrive && !message.saveToDropbox && !message.saveWithWebDAV && !message.saveToGitHub && !message.saveToRestFormApi && !message.saveToS3) {
+		// 检查是否跳过保存（仅针对本地下载，不包括云端保存）
+		if (message.backgroundSave && !message.saveToGDrive && !message.saveToDropbox && !message.saveWithWebDAV && !message.saveToGitHub && !message.saveToRestFormApi && !message.saveToS3 && !message.saveToCanglang) {
 			const testSkip = await testSkipSave(message.filename, message);
 			message.filenameConflictAction = testSkip.filenameConflictAction;
 			skipped = testSkip.skipped;
@@ -193,6 +206,22 @@ async function downloadContent(contents, tab, incognito, message) {
 			} else if (message.saveToClipboard) {
 				message.content = contents.join("");
 				saveToClipboard(message);
+			} else if (message.saveToCanglang) {
+				// 保存到沧澜平台
+				// Token 已在函数开头检查并获取
+				response = await saveToCanglang(
+					message.taskId,
+					encodeSharpCharacter(message.filename),
+					contents.join(""),           // HTML 内容
+					message.originalUrl,         // 原始网页URL
+					message.title,               // 页面标题
+					message.canglangApiUrl,      // 沧澜平台 API 地址
+					canglangToken                // JWT Token（已提前获取）
+				);
+				// 显示成功消息给用户
+				ui.onEnd(tabId);
+				// 发送 Toast 成功通知
+				await sendToastNotification(tabId, '已成功保存至沧澜平台！', 'success', 4000);
 			} else if (message.saveWithWebDAV) {
 				response = await saveWithWebDAV(message.taskId, encodeSharpCharacter(message.filename), contents.join(""), message.webDAVURL, message.webDAVUser, message.webDAVPassword, { filenameConflictAction: message.filenameConflictAction, prompt });
 			} else if (message.saveWithMCP) {
@@ -277,7 +306,15 @@ async function downloadContent(contents, tab, incognito, message) {
 	} catch (error) {
 		if (!error.message || error.message != "upload_cancelled") {
 			console.error(error); // eslint-disable-line no-console
-			ui.onError(tabId, error.message, error.link);
+
+			// 如果是沧澜平台相关的错误，只发送 Toast 通知
+			if (message.saveToCanglang) {
+				const errorMsg = error.message || '未知错误';
+				await sendToastNotification(tabId, `保存失败：${errorMsg.replace(' (沧澜平台)', '')}`, 'error', 5000);
+			} else {
+				// 其他保存方式使用原来的 UI 错误提示
+				ui.onError(tabId, error.message, error.link);
+			}
 		}
 	} finally {
 		if (message.url) {
@@ -289,8 +326,20 @@ async function downloadContent(contents, tab, incognito, message) {
 async function downloadCompressedContent(message, tab) {
 	const tabId = tab.id;
 	try {
+		// 如果启用了沧澜平台保存，提前检查 Token
+		let canglangToken = null;
+		if (message.saveToCanglang) {
+			canglangToken = await getCanglangTokenFromStorage();
+			if (!canglangToken) {
+				// 发送 Toast 错误通知
+				await sendToastNotification(tabId, '未登录沧澜平台，请先登录后再试', 'error', 5000);
+				throw new Error(`未登录沧澜平台，请登录后重试`);
+			}
+		}
+
 		let skipped;
-		if (message.backgroundSave && !message.saveToGDrive && !message.saveToDropbox && !message.saveWithWebDAV && !message.saveWithMCP && !message.saveToGitHub && !message.saveToRestFormApi && !message.sharePage) {
+		// 检查是否跳过保存（仅针对本地下载，不包括云端保存）
+		if (message.backgroundSave && !message.saveToGDrive && !message.saveToDropbox && !message.saveWithWebDAV && !message.saveWithMCP && !message.saveToGitHub && !message.saveToRestFormApi && !message.sharePage && !message.saveToCanglang) {
 			const testSkip = await testSkipSave(message.filename, message);
 			message.filenameConflictAction = testSkip.filenameConflictAction;
 			skipped = testSkip.skipped;
@@ -337,6 +386,23 @@ async function downloadCompressedContent(message, tab) {
 				if (response.error) {
 					throw new Error(response.error);
 				}
+			} else if (message.saveToCanglang) {
+				// 保存压缩内容到沧澜平台
+				// Token 已在函数开头检查并获取
+				const content = await blob.text();
+				response = await saveToCanglang(
+					message.taskId,
+					encodeSharpCharacter(message.filename),
+					content,                     // 压缩后的内容
+					message.originalUrl,         // 原始网页URL
+					message.title,               // 页面标题
+					message.canglangApiUrl,      // 沧澜平台 API 地址
+					canglangToken                // JWT Token（已提前获取）
+				);
+				// 显示成功消息给用户
+				ui.onEnd(tabId);
+				// 发送 Toast 成功通知
+				await sendToastNotification(tabId, '已成功保存至沧澜平台！', 'success', 4000);
 			} else if (message.saveWithWebDAV) {
 				response = await saveWithWebDAV(message.taskId, encodeSharpCharacter(message.filename), blob, message.webDAVURL, message.webDAVUser, message.webDAVPassword, { filenameConflictAction: message.filenameConflictAction, prompt });
 			} else if (message.saveWithMCP) {
@@ -410,7 +476,15 @@ async function downloadCompressedContent(message, tab) {
 	} catch (error) {
 		if (!error.message || error.message != "upload_cancelled") {
 			console.error(error); // eslint-disable-line no-console
-			ui.onError(tabId, error.message, error.link);
+
+			// 如果是沧澜平台相关的错误，只发送 Toast 通知
+			if (message.saveToCanglang) {
+				const errorMsg = error.message || '未知错误';
+				await sendToastNotification(tabId, `保存失败：${errorMsg.replace(' (沧澜平台)', '')}`, 'error', 5000);
+			} else {
+				// 其他保存方式使用原来的 UI 错误提示
+				ui.onError(tabId, error.message, error.link);
+			}
 		}
 	} finally {
 		if (message.url) {
@@ -653,6 +727,158 @@ async function saveToRestFormApi(taskId, filename, content, url, token, restApiU
 	}
 }
 
+/**
+ * 从扩展 storage 中读取沧澜平台的认证 Token
+ * Token 由沧澜平台页面的同步脚本自动更新
+ *
+ * @returns {Promise<string|null>} - 返回 Token，如果未找到则返回 null
+ */
+async function getCanglangTokenFromStorage() {
+	try {
+		console.log("[沧澜插件] 尝试从 storage 读取沧澜平台 Token...");
+		const result = await browser.storage.local.get("canglangAuthToken");
+		console.log("[沧澜插件] Storage 返回结果:", result);
+		const tokenData = result.canglangAuthToken;
+
+		if (!tokenData || !tokenData.token) {
+			console.log("[沧澜插件] 沧澜平台 Token 未找到，请先登录沧澜平台");
+			console.log("[沧澜插件] tokenData:", tokenData);
+			return null;
+		}
+
+		console.log("[沧澜插件] 成功从扩展 storage 读取沧澜平台 Token");
+		console.log("[沧澜插件] Token 更新时间:", tokenData.updatedAt);
+		console.log("[沧澜插件] Token 来源:", tokenData.source);
+		return tokenData.token;
+	} catch (error) {
+		console.error("[沧澜插件] 读取沧澜平台 Token 失败:", error);
+		return null;
+	}
+}
+
+/**
+ * 保存网页到沧澜平台
+ *
+ * 此函数将处理后的网页数据发送到沧澜平台的归档 API。
+ * Token 会自动从扩展 storage 中读取（由沧澜平台页面的同步脚本自动更新）。
+ *
+ * @param {number} taskId - 任务ID，用于跟踪和取消操作
+ * @param {string} filename - 保存的文件名
+ * @param {string} content - HTML 内容字符串
+ * @param {string} pageUrl - 原始网页URL
+ * @param {string} pageTitle - 网页标题
+ * @param {string} apiUrl - 沧澜平台 API 地址
+ *
+ * @returns {Promise<Object>} - API 响应对象
+ *
+ * @throws {Error} - 如果请求失败则抛出错误
+ *
+ * @example
+ * await saveToCanglang(
+ *   taskId,
+ *   "example.html",
+ *   "<html>...</html>",
+ *   "https://example.com",
+ *   "Example Page",
+ *   "http://192.168.100.100:18101/api/v1/dynamic-monitor/article/archives"
+ * );
+ */
+/**
+ * 从 HTML 内容中提取 meta description
+ * 使用正则表达式快速提取，无需解析整个 DOM
+ *
+ * @param {string} htmlContent - HTML 内容
+ * @returns {string} - 描述文本，如果未找到则返回空字符串
+ */
+function extractDescription(htmlContent) {
+	try {
+		// 优先提取 og:description
+		let match = htmlContent.match(/<meta\s+property=["']og:description["']\s+content=["']([^"']+)["']/i);
+		if (match && match[1]) {
+			return match[1].trim();
+		}
+
+		// 尝试提取标准 meta description
+		match = htmlContent.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i);
+		if (match && match[1]) {
+			return match[1].trim();
+		}
+
+		// 如果都没有，返回空字符串
+		return '';
+	} catch (error) {
+		console.error("提取 description 失败:", error);
+		return '';
+	}
+}
+
+async function saveToCanglang(taskId, filename, content, pageUrl, pageTitle, apiUrl, authToken) {
+	try {
+		// 检查任务是否已被取消
+		const taskInfo = business.getTaskInfo(taskId);
+		if (!taskInfo || !taskInfo.cancelled) {
+			// 设置取消回调（用于中止请求）
+			let abortController = new AbortController();
+			business.setCancelCallback(taskId, () => abortController.abort());
+
+			// 从 HTML 内容中提取页面描述
+			const extractedDescription = extractDescription(content);
+			const description = extractedDescription || pageTitle;
+
+			// 构建请求数据，符合沧澜平台 API 规范
+			const requestData = {
+				url: pageUrl,                     // 网页URL（必填）
+				page_title: pageTitle,            // 网页标题（必填）
+				description: description,         // 网页描述（从 meta 标签提取或使用默认值）
+				html_content: content,            // HTML内容（必填）
+			};
+
+			// 构建请求头
+			const headers = {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${authToken}`  // 使用传入的认证 Token
+			};
+
+			// 发送 POST 请求到沧澜平台 API
+			const response = await fetch(apiUrl, {
+				method: "POST",
+				headers: headers,
+				body: JSON.stringify(requestData),
+				signal: abortController.signal  // 支持取消请求
+			});
+
+			// 检查响应状态
+			if (!response.ok) {
+				// 尝试解析错误消息
+				let errorMessage;
+				try {
+					const errorData = await response.json();
+					errorMessage = errorData.message || errorData.detail || response.statusText;
+				} catch (e) {
+					errorMessage = response.statusText;
+				}
+				throw new Error(`HTTP ${response.status}: ${errorMessage}`);
+			}
+
+			// 解析成功响应
+			const result = await response.json();
+
+			// 返回结果对象（包含成功标志）
+			return {
+				success: true,
+				data: result,
+				url: pageUrl
+			};
+		}
+	} catch (error) {
+		// 统一错误处理
+		if (error.name === "AbortError") {
+			throw new Error("请求已取消 (沧澜平台)");
+		}
+		throw new Error(error.message + " (沧澜平台)");
+	}
+}
+
 async function downloadPageForeground(taskId, filename, content, mimeType, tabId, { foregroundSave, sharePage } = {}) {
 	const serializer = yabson.getSerializer({
 		filename,
@@ -669,4 +895,25 @@ async function downloadPageForeground(taskId, filename, content, mimeType, tabId
 		});
 	}
 	return browser.tabs.sendMessage(tabId, { method: "content.download" });
+}
+
+/**
+ * 向指定标签页发送 Toast 通知
+ * @param {number} tabId - 标签页 ID
+ * @param {string} message - 通知消息
+ * @param {string} type - 通知类型：'success' | 'error' | 'warning' | 'info'
+ * @param {number} duration - 显示时长（毫秒），默认 3000
+ */
+async function sendToastNotification(tabId, message, type = 'info', duration = 3000) {
+	try {
+		await browser.tabs.sendMessage(tabId, {
+			method: 'content.showToast',
+			message,
+			type,
+			duration
+		});
+	} catch (error) {
+		// 如果发送失败（例如页面未加载 content script），静默失败
+		console.log('[沧澜插件] Toast 通知发送失败:', error.message);
+	}
 }

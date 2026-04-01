@@ -56,8 +56,8 @@
 		"description": "Command label: 'Custom shortcut #10'"
 	},
 	"menuSavePage": {
-		"message": "Зберегти сторінку з допомогою SingleFile",
-		"description": "Menu entry: 'Save page with SingleFile'"
+		"message": "Зберегти сторінку з допомогою 沧澜",
+		"description": "Menu entry: 'Save page with 沧澜'"
 	},
 	"menuSaveSelectedLinks": {
 		"message": "Зберегти вибрані посилання",
@@ -101,7 +101,7 @@
 	},
 	"menuSaveTabs": {
 		"message": "Зберегти вкладки",
-		"description": "Menu entry (SingleFile button only): 'Save tabs'"
+		"description": "Menu entry (沧澜 button only): 'Save tabs'"
 	},
 	"menuSaveSelectedTabs": {
 		"message": "Зберегти вибрані вкладки",
@@ -140,20 +140,20 @@
 		"description": "Menu entry: 'Auto-save' > Auto-save all tabs'"
 	},
 	"buttonDefaultTooltip": {
-		"message": "Зберегти сторінку з допомогою SingleFile",
-		"description": "Button title: 'Save page with SingleFile'"
+		"message": "Зберегти сторінку з допомогою 沧澜",
+		"description": "Button title: 'Save page with 沧澜'"
 	},
 	"buttonBlockedBadge": {
 		"message": "🚫",
 		"description": "Button badge when the page is blocked: '🚫'"
 	},
 	"buttonBlockedTooltip": {
-		"message": "Ця сторінка не може бути збережена з SingleFile",
-		"description": "Button title: 'This page cannot be saved with SingleFile'"
+		"message": "Ця сторінка не може бути збережена з 沧澜",
+		"description": "Button title: 'This page cannot be saved with 沧澜'"
 	},
 	"buttonInitializingTooltip": {
-		"message": "Ініціалізація SingleFile",
-		"description": "Button title during initialization: 'Initializing SingleFile (x/2)'"
+		"message": "Ініціалізація 沧澜",
+		"description": "Button title during initialization: 'Initializing 沧澜 (x/2)'"
 	},
 	"buttonInitializingBadge": {
 		"message": "•••",
@@ -592,8 +592,8 @@
 		"description": "Options page label: 'period (s)'"
 	},
 	"optionAutoSaveExternalSave": {
-		"message": "зберегти сторінку за допомогою програми SingleFile Companion",
-		"description": "Options page label: 'save the page with SingleFile Companion'"
+		"message": "зберегти сторінку за допомогою програми 沧澜 Companion",
+		"description": "Options page label: 'save the page with 沧澜 Companion'"
 	},
 	"optionsEditorSubTitle": {
 		"message": "Редактор анотацій",
@@ -608,8 +608,8 @@
 		"description": "Options page label: 'open saved pages in a new tab'"
 	},
 	"optionAutoOpenEditor": {
-		"message": "відкривати сторінки, збережені за допомогою SingleFile, в редакторі анотацій",
-		"description": "Options page label: 'open pages saved with SingleFile in the annotation editor'"
+		"message": "відкривати сторінки, збережені за допомогою 沧澜, в редакторі анотацій",
+		"description": "Options page label: 'open pages saved with 沧澜 in the annotation editor'"
 	},
 	"optionDefaultEditorMode": {
 		"message": "режим за замовчуванням",
@@ -708,7 +708,7 @@
 		"description": "Options page label: 'add proof of existence'"
 	},
 	"optionsAddProofConfirm": {
-		"message": "Підтвердьте, що ви дозволяєте SingleFile надсилати в Woleet API хеш SHA256 кожної сторінки, яку ви збираєтеся зберегти. Ви можете знайти більше інформації про цю функцію на сторінці довідки або натиснувши на знак питання поруч із опцією.",
+		"message": "Підтвердьте, що ви дозволяєте 沧澜 надсилати в Woleet API хеш SHA256 кожної сторінки, яку ви збираєтеся зберегти. Ви можете знайти більше інформації про цю функцію на сторінці довідки або натиснувши на знак питання поруч із опцією.",
 		"description": "Popup text displayed wen enabling the option 'add proof of existence'"
 	},
 	"optionWoleetKey": {
@@ -796,8 +796,8 @@
 		"description": "Options page label: 'authentication token'"
 	},
 	"optionSaveWithCompanion": {
-		"message": "зберегти за допомогою програми SingleFile Companion",
-		"description": "Options page label: 'save with SingleFile Companion'"
+		"message": "зберегти за допомогою програми 沧澜 Companion",
+		"description": "Options page label: 'save with 沧澜 Companion'"
 	},
 	"optionSaveCreatedBookmarks": {
 		"message": "зберегти сторінку новоствореної закладки",
@@ -880,8 +880,8 @@
 		"description": "Width of the log panel in pixels, it should be adjusted for the longest label beginning with 'log' (e.g. 'logPanelDeferredImages')"
 	},
 	"topPanelError": {
-		"message": "Помилка SingleFile: ",
-		"description": "Label 'SingleFile error: ' in the top panel when displaying an error message"
+		"message": "Помилка 沧澜: ",
+		"description": "Label '沧澜 error: ' in the top panel when displaying an error message"
 	},
 	"topPanelEmbeddedImageButton": {
 		"message": "Відкрити зображення..",

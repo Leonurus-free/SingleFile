@@ -56,8 +56,8 @@
 		"description": "Command label: 'Custom shortcut #10'"
 	},
 	"menuSavePage": {
-		"message": "Spara sidan med SingleFile",
-		"description": "Menu entry: 'Save page with SingleFile'"
+		"message": "Spara sidan med 沧澜",
+		"description": "Menu entry: 'Save page with 沧澜'"
 	},
 	"menuSaveSelectedLinks": {
 		"message": "Spara valda länkar",
@@ -101,7 +101,7 @@
 	},
 	"menuSaveTabs": {
 		"message": "Spara flikar",
-		"description": "Menu entry (SingleFile button only): 'Save tabs'"
+		"description": "Menu entry (沧澜 button only): 'Save tabs'"
 	},
 	"menuSaveSelectedTabs": {
 		"message": "Spara valda flikar",
@@ -140,20 +140,20 @@
 		"description": "Menu entry: 'Auto-save' > Auto-save all tabs'"
 	},
 	"buttonDefaultTooltip": {
-		"message": "Spara sidan med SingleFile",
-		"description": "Button title: 'Save page with SingleFile'"
+		"message": "Spara sidan med 沧澜",
+		"description": "Button title: 'Save page with 沧澜'"
 	},
 	"buttonBlockedBadge": {
 		"message": "🚫",
 		"description": "Button badge when the page is blocked: '🚫'"
 	},
 	"buttonBlockedTooltip": {
-		"message": "Denna sida kan inte sparas med SingleFile",
-		"description": "Button title: 'This page cannot be saved with SingleFile'"
+		"message": "Denna sida kan inte sparas med 沧澜",
+		"description": "Button title: 'This page cannot be saved with 沧澜'"
 	},
 	"buttonInitializingTooltip": {
-		"message": "Initierar SingleFile",
-		"description": "Button title during initialization: 'Initializing SingleFile (x/2)'"
+		"message": "Initierar 沧澜",
+		"description": "Button title during initialization: 'Initializing 沧澜 (x/2)'"
 	},
 	"buttonInitializingBadge": {
 		"message": "•••",
@@ -592,8 +592,8 @@
 		"description": "Options page label: 'period (s)'"
 	},
 	"optionAutoSaveExternalSave": {
-		"message": "spara sidan med SingleFile Companion",
-		"description": "Options page label: 'save the page with SingleFile Companion'"
+		"message": "spara sidan med 沧澜 Companion",
+		"description": "Options page label: 'save the page with 沧澜 Companion'"
 	},
 	"optionsEditorSubTitle": {
 		"message": "Anteckningsredigerare",
@@ -608,8 +608,8 @@
 		"description": "Options page label: 'open saved pages in a new tab'"
 	},
 	"optionAutoOpenEditor": {
-		"message": "öppna sidor sparade med SingleFile i anteckningsredigeraren",
-		"description": "Options page label: 'open pages saved with SingleFile in the annotation editor'"
+		"message": "öppna sidor sparade med 沧澜 i anteckningsredigeraren",
+		"description": "Options page label: 'open pages saved with 沧澜 in the annotation editor'"
 	},
 	"optionDefaultEditorMode": {
 		"message": "standardläge",
@@ -708,7 +708,7 @@
 		"description": "Options page label: 'add proof of existence'"
 	},
 	"optionsAddProofConfirm": {
-		"message": "Bekräfta att du tillåter SingleFile att skicka till Woleet API en SHA256-hash för varje sida du ska spara. Du kan hitta mer information om denna funktion på hjälpsidan eller genom att klicka på frågetecknet bredvid alternativet.",
+		"message": "Bekräfta att du tillåter 沧澜 att skicka till Woleet API en SHA256-hash för varje sida du ska spara. Du kan hitta mer information om denna funktion på hjälpsidan eller genom att klicka på frågetecknet bredvid alternativet.",
 		"description": "Popup text displayed wen enabling the option 'add proof of existence'"
 	},
 	"optionWoleetKey": {
@@ -796,8 +796,8 @@
 		"description": "Options page label: 'authentication token'"
 	},
 	"optionSaveWithCompanion": {
-		"message": "spara med SingleFile Companion",
-		"description": "Options page label: 'save with SingleFile Companion'"
+		"message": "spara med 沧澜 Companion",
+		"description": "Options page label: 'save with 沧澜 Companion'"
 	},
 	"optionSaveCreatedBookmarks": {
 		"message": "spara sidan av ett nyskapat bokmärke",
@@ -880,8 +880,8 @@
 		"description": "Width of the log panel in pixels, it should be adjusted for the longest label beginning with 'log' (e.g. 'logPanelDeferredImages')"
 	},
 	"topPanelError": {
-		"message": "SingleFile-fel: ",
-		"description": "Label 'SingleFile error: ' in the top panel when displaying an error message"
+		"message": "沧澜-fel: ",
+		"description": "Label '沧澜 error: ' in the top panel when displaying an error message"
 	},
 	"topPanelEmbeddedImageButton": {
 		"message": "Öppna bild...",

@@ -200,7 +200,15 @@ const DEFAULT_CONFIG = {
 	infobarPositionLeft: "",
 	removeNoScriptTags: true,
 	customShortcut: null,
-	imageReductionFactor: 1
+	imageReductionFactor: 1,
+	// 沧澜平台配置项
+	saveToCanglang: true,  // 是否保存到沧澜平台
+	canglangDomain: "http://192.168.100.100:18101",  // 沧澜平台域名（用于 Token 同步和错误提示）
+	canglangApiUrl: "http://192.168.100.100:18101/api/v1/dynamic-monitor/article/archives"  // 沧澜平台 API 地址
+	// 注意：
+	// 1. Token 会自动从沧澜平台页面同步到扩展 storage，无需手动配置
+	// 2. 用户只需访问沧澜平台并登录一次，扩展会自动监测并同步 Token
+	// 3. 如果更改 canglangDomain，需要同步修改 manifest.json 中的 content_scripts matches 配置
 };
 
 const DEFAULT_RULES = [{

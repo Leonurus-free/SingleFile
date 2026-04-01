@@ -56,8 +56,8 @@
 		"description": "Command label: 'Custom shortcut #10'"
 	},
 	"menuSavePage": {
-		"message": "Səhifəni SingleFile ilə yaddaşa qeyd et",
-		"description": "Menu entry: 'Save page with SingleFile'"
+		"message": "Səhifəni 沧澜 ilə yaddaşa qeyd et",
+		"description": "Menu entry: 'Save page with 沧澜'"
 	},
 	"menuSaveSelectedLinks": {
 		"message": "Seçilmiş linkləri yaddaşa qeyd et",
@@ -101,7 +101,7 @@
 	},
 	"menuSaveTabs": {
 		"message": "Tabları yaddaşa qeyd et",
-		"description": "Menu entry (SingleFile button only): 'Save tabs'"
+		"description": "Menu entry (沧澜 button only): 'Save tabs'"
 	},
 	"menuSaveSelectedTabs": {
 		"message": "Seçilmiş tabları yaddaşa qeyd et",
@@ -140,20 +140,20 @@
 		"description": "Menu entry: 'Auto-save' > Auto-save all tabs'"
 	},
 	"buttonDefaultTooltip": {
-		"message": "SingleFile ilə səhifəni yaddaşa qeyd et",
-		"description": "Button title: 'Save page with SingleFile'"
+		"message": "沧澜 ilə səhifəni yaddaşa qeyd et",
+		"description": "Button title: 'Save page with 沧澜'"
 	},
 	"buttonBlockedBadge": {
 		"message": "🚫",
 		"description": "Button badge when the page is blocked: '🚫'"
 	},
 	"buttonBlockedTooltip": {
-		"message": "Bu səhifə SingleFile ilə yaddaşa qeyd edilə bilmir",
-		"description": "Button title: 'This page cannot be saved with SingleFile'"
+		"message": "Bu səhifə 沧澜 ilə yaddaşa qeyd edilə bilmir",
+		"description": "Button title: 'This page cannot be saved with 沧澜'"
 	},
 	"buttonInitializingTooltip": {
-		"message": "SingleFile Başlatırlır",
-		"description": "Button title during initialization: 'Initializing SingleFile (x/2)'"
+		"message": "沧澜 Başlatırlır",
+		"description": "Button title during initialization: 'Initializing 沧澜 (x/2)'"
 	},
 	"buttonInitializingBadge": {
 		"message": "•••",
@@ -184,7 +184,7 @@
 		"description": "Badge label when auto-save is active"
 	},
 	"optionsTitle": {
-		"message": "SingleFile seçimləri",
+		"message": "沧澜 seçimləri",
 		"description": "Options page title"
 	},
 	"optionsUserInterfaceSubTitle": {
@@ -593,7 +593,7 @@
 	},
 	"optionAutoSaveExternalSave": {
 		"message": "xarici yaddaşa qeyd et",
-		"description": "Options page label: 'save the page with SingleFile Companion'"
+		"description": "Options page label: 'save the page with 沧澜 Companion'"
 	},
 	"optionsEditorSubTitle": {
 		"message": "Redaktor",
@@ -609,7 +609,7 @@
 	},
 	"optionAutoOpenEditor": {
 		"message": "səhifəni yaddaşa qeyd etdikdən sonra redaktoru avtomatik olaraq açın",
-		"description": "Options page label: 'open pages saved with SingleFile in the annotation editor'"
+		"description": "Options page label: 'open pages saved with 沧澜 in the annotation editor'"
 	},
 	"optionDefaultEditorMode": {
 		"message": "standart rejim",
@@ -708,7 +708,7 @@
 		"description": "Options page label: 'add proof of existence'"
 	},
 	"optionsAddProofConfirm": {
-		"message": "SingleFile-a saxlayacağınız hər səhifənin SHA256 hash-ini Woleet API-yə göndərməyə icazə verdiyinizi təsdiq edin. Bu funksiya haqqında daha çox məlumatı yardım səhifəsində və ya seçimin yanındakı sual işarəsinə klikləməklə tapa bilərsiniz.",
+		"message": "沧澜-a saxlayacağınız hər səhifənin SHA256 hash-ini Woleet API-yə göndərməyə icazə verdiyinizi təsdiq edin. Bu funksiya haqqında daha çox məlumatı yardım səhifəsində və ya seçimin yanındakı sual işarəsinə klikləməklə tapa bilərsiniz.",
 		"description": "Popup text displayed wen enabling the option 'add proof of existence'"
 	},
 	"optionWoleetKey": {
@@ -796,8 +796,8 @@
 		"description": "Options page label: 'authentication token'"
 	},
 	"optionSaveWithCompanion": {
-		"message": "SingleFile Companion ilə yaddaşa qeyd edin",
-		"description": "Options page label: 'save with SingleFile Companion'"
+		"message": "沧澜 Companion ilə yaddaşa qeyd edin",
+		"description": "Options page label: 'save with 沧澜 Companion'"
 	},
 	"optionSaveCreatedBookmarks": {
 		"message": "yaddaşa qeyd edilmiş səhifənin yerini yaddaşa qeyd edin",
@@ -880,8 +880,8 @@
 		"description": "Width of the log panel in pixels, it should be adjusted for the longest label beginning with 'log' (e.g. 'logPanelDeferredImages')"
 	},
 	"topPanelError": {
-		"message": "SingleFile xətası: ",
-		"description": "Label 'SingleFile error: ' in the top panel when displaying an error message"
+		"message": "沧澜 xətası: ",
+		"description": "Label '沧澜 error: ' in the top panel when displaying an error message"
 	},
 	"topPanelEmbeddedImageButton": {
 		"message": "Şəkil əlavə et...",

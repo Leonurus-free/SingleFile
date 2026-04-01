@@ -1,5 +1,5 @@
 {
-	"name": "SingleFile",
+	"name": "沧澜",
 	"author": "Gildas Lormeau",
 	"homepage_url": "https://www.getsinglefile.com",
 	"icons": {
@@ -12,6 +12,19 @@
 	"version": "1.22.92",
 	"description": "__MSG_extensionDescription__",
 	"content_scripts": [
+		{
+			"matches": [
+				"http://192.168.100.100:15666/*",
+				"https://192.168.100.100:15666/*"
+			],
+			"run_at": "document_idle",
+			"js": [
+				"lib/chrome-browser-polyfill.js",
+				"lib/secure-ls.min.js",
+				"lib/canglang-token-sync.js"
+			],
+			"all_frames": false
+		},
 		{
 			"matches": [
 				"<all_urls>"
@@ -49,7 +62,8 @@
 				"lib/chrome-browser-polyfill.js",
 				"lib/single-file-bootstrap.js",
 				"lib/single-file-extension-bootstrap.js",
-				"lib/single-file-infobar.js"
+				"lib/single-file-infobar.js",
+				"lib/toast-notification.js"
 			]
 		}
 	],
@@ -58,7 +72,7 @@
 	},
 	"sidebar_action": {
 		"browser_style": true,
-		"default_title": "SingleFile",
+		"default_title": "沧澜",
 		"default_panel": "src/ui/pages/panel.html",
 		"default_icon": "src/ui/resources/icon_128.png",
 		"open_at_install": false
@@ -141,6 +155,7 @@
 		"downloads",
 		"storage",
 		"tabs",
+		"notifications",
 		"<all_urls>"
 	],
 	"optional_permissions": [

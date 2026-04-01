@@ -56,8 +56,8 @@
 		"description": "Command label: 'Custom shortcut #10'"
 	},
 	"menuSavePage": {
-		"message": "SingleFile でページを保存",
-		"description": "Menu entry: 'Save page with SingleFile'"
+		"message": "沧澜 でページを保存",
+		"description": "Menu entry: 'Save page with 沧澜'"
 	},
 	"menuSaveSelectedLinks": {
 		"message": "選択したリンクを保存する",
@@ -101,7 +101,7 @@
 	},
 	"menuSaveTabs": {
 		"message": "タブを保存",
-		"description": "Menu entry (SingleFile button only): 'Save tabs'"
+		"description": "Menu entry (沧澜 button only): 'Save tabs'"
 	},
 	"menuSaveSelectedTabs": {
 		"message": "選択したタブを保存",
@@ -140,20 +140,20 @@
 		"description": "Menu entry: 'Auto-save' > Auto-save all tabs'"
 	},
 	"buttonDefaultTooltip": {
-		"message": "SingleFile でページを保存",
-		"description": "Button title: 'Save page with SingleFile'"
+		"message": "沧澜 でページを保存",
+		"description": "Button title: 'Save page with 沧澜'"
 	},
 	"buttonBlockedBadge": {
 		"message": "🚫",
 		"description": "Button badge when the page is blocked: '🚫'"
 	},
 	"buttonBlockedTooltip": {
-		"message": "このページは SingleFile では保存できません",
-		"description": "Button title: 'This page cannot be saved with SingleFile'"
+		"message": "このページは 沧澜 では保存できません",
+		"description": "Button title: 'This page cannot be saved with 沧澜'"
 	},
 	"buttonInitializingTooltip": {
-		"message": "SingleFile の初期化",
-		"description": "Button title during initialization: 'Initializing SingleFile (x/2)'"
+		"message": "沧澜 の初期化",
+		"description": "Button title during initialization: 'Initializing 沧澜 (x/2)'"
 	},
 	"buttonInitializingBadge": {
 		"message": "•••",
@@ -592,8 +592,8 @@
 		"description": "Options page label: 'period (s)'"
 	},
 	"optionAutoSaveExternalSave": {
-		"message": "SingleFile Companion でページを保存する",
-		"description": "Options page label: 'save the page with SingleFile Companion'"
+		"message": "沧澜 Companion でページを保存する",
+		"description": "Options page label: 'save the page with 沧澜 Companion'"
 	},
 	"optionsEditorSubTitle": {
 		"message": "注釈エディタ",
@@ -608,8 +608,8 @@
 		"description": "Options page label: 'open saved pages in a new tab'"
 	},
 	"optionAutoOpenEditor": {
-		"message": "annotation editor で、SingleFile で保存されたページを開く",
-		"description": "Options page label: 'open pages saved with SingleFile in the annotation editor'"
+		"message": "annotation editor で、沧澜 で保存されたページを開く",
+		"description": "Options page label: 'open pages saved with 沧澜 in the annotation editor'"
 	},
 	"optionDefaultEditorMode": {
 		"message": "デフォルトモード",
@@ -708,7 +708,7 @@
 		"description": "Options page label: 'add proof of existence'"
 	},
 	"optionsAddProofConfirm": {
-		"message": "Confirm you allow SingleFile to send to the Woleet API a SHA256 hash of each page you are going to save. You can find more information about this feature in the help page or by clicking on the question mark next to the option.",
+		"message": "Confirm you allow 沧澜 to send to the Woleet API a SHA256 hash of each page you are going to save. You can find more information about this feature in the help page or by clicking on the question mark next to the option.",
 		"description": "Popup text displayed wen enabling the option 'add proof of existence'"
 	},
 	"optionWoleetKey": {
@@ -796,8 +796,8 @@
 		"description": "Options page label: 'authentication token'"
 	},
 	"optionSaveWithCompanion": {
-		"message": "SingleFile Companionで保存する",
-		"description": "Options page label: 'save with SingleFile Companion'"
+		"message": "沧澜 Companionで保存する",
+		"description": "Options page label: 'save with 沧澜 Companion'"
 	},
 	"optionSaveCreatedBookmarks": {
 		"message": "新しく作成したブックマークのページを保存する",
@@ -880,8 +880,8 @@
 		"description": "Width of the log panel in pixels, it should be adjusted for the longest label beginning with 'log' (e.g. 'logPanelDeferredImages')"
 	},
 	"topPanelError": {
-		"message": "SingleFile エラー: ",
-		"description": "Label 'SingleFile error: ' in the top panel when displaying an error message"
+		"message": "沧澜 エラー: ",
+		"description": "Label '沧澜 error: ' in the top panel when displaying an error message"
 	},
 	"topPanelEmbeddedImageButton": {
 		"message": "画像を開く...",

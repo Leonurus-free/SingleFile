@@ -1,13 +1,13 @@
-# SingleFile
+# 沧澜
 
-SingleFile helps you to save a complete web page into a single HTML
-file. SingleFile is a Web Extension (and a CLI tool) compatible with Chrome, Firefox
+沧澜 helps you to save a complete web page into a single HTML
+file. 沧澜 is a Web Extension (and a CLI tool) compatible with Chrome, Firefox
 (Desktop and Mobile), Microsoft Edge, Safari, Vivaldi, Brave, Waterfox, Yandex
 browser, and Opera.
 
 ## Table of Contents
 
-- [SingleFile](#singlefile)
+- [沧澜](#singlefile)
   - [Table of Contents](#table-of-contents)
   - [Demo](#demo)
   - [Install](#install)
@@ -16,10 +16,10 @@ browser, and Opera.
   - [FAQ](#faq)
   - [Release notes](#release-notes)
   - [Known Issues and Troubleshooting](#known-issues-and-troubleshooting)
-  - [Command Line Interface (SingleFile CLI)](#command-line-interface-singlefile-cli)
+  - [Command Line Interface (沧澜 CLI)](#command-line-interface-singlefile-cli)
   - [Integration with user scripts](#integration-with-user-scripts)
   - [File format comparison](#file-format-comparison)
-  - [Projects using/compatible with SingleFile](#projects-usingcompatible-with-singlefile)
+  - [Projects using/compatible with 沧澜](#projects-usingcompatible-with-singlefile)
   - [Privacy Policy](#privacy-policy)
   - [Contributors](#contributors)
   - [Code derived from third party projects](#code-derived-from-third-party-projects)
@@ -32,7 +32,7 @@ https://user-images.githubusercontent.com/396787/156664907-cc458e35-f41b-45ca-91
 
 ## Install
 
-SingleFile can be installed from the store of:
+沧澜 can be installed from the store of:
 
 - Firefox: https://addons.mozilla.org/firefox/addon/single-file
 - Firefox for Android:
@@ -44,22 +44,22 @@ SingleFile can be installed from the store of:
   https://microsoftedge.microsoft.com/addons/detail/efnbkdcfmcmnhlkaijjjmhjjgladedno
 
 You can also download the zip file
-(https://github.com/gildas-lormeau/SingleFile/archive/master.zip) of the project
+(https://github.com/gildas-lormeau/沧澜/archive/master.zip) of the project
 and install it manually by unzipping it somewhere on your disk and following
 these instructions:
 
 - Firefox: https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox
-- Chrome and Microsoft Edge: https://github.com/gildas-lormeau/SingleFile-MV3
-- Safari: https://github.com/gildas-lormeau/SingleFile-Safari-Extension
+- Chrome and Microsoft Edge: https://github.com/gildas-lormeau/沧澜-MV3
+- Safari: https://github.com/gildas-lormeau/沧澜-Safari-Extension
   
 ## Getting started
 
-- Click on the SingleFile button in the extension toolbar to save the page.
+- Click on the 沧澜 button in the extension toolbar to save the page.
 - You can click again on the button to cancel the action when processing a page.
 
 ## Additional notes
 
-- Open the context menu by right-clicking the SingleFile button in the extension
+- Open the context menu by right-clicking the 沧澜 button in the extension
   toolbar or on the webpage. It allows you to save:
   - the current tab,
   - the selected content,
@@ -78,7 +78,7 @@ these instructions:
   - all the tabs.
 - With auto-save active, pages are automatically saved every time after being
   loaded (or before being unloaded if not).
-- Right-click on the SingleFile button and select "Manage extension" (Firefox) /
+- Right-click on the 沧澜 button and select "Manage extension" (Firefox) /
   "Options" (Chrome) to open the options page.
 - Enable the option "Destination > save to Google Drive" or "Destination >
   upload to GitHub" to upload pages to Google Drive or GitHub respectively.
@@ -95,7 +95,7 @@ these instructions:
 
 ## FAQ
 
-See https://github.com/gildas-lormeau/SingleFile/blob/master/faq.md
+See https://github.com/gildas-lormeau/沧澜/blob/master/faq.md
 
 ## Release notes
 
@@ -103,18 +103,18 @@ See https://addons.mozilla.org/firefox/addon/single-file/versions/
 
 ## Known Issues and Troubleshooting
 
-See https://github.com/gildas-lormeau/SingleFile/blob/master/known-issues.md
+See https://github.com/gildas-lormeau/沧澜/blob/master/known-issues.md
 
-## Command Line Interface (SingleFile CLI)
+## Command Line Interface (沧澜 CLI)
 
 You can save web pages to HTML from the command line interface. See here for
 more info: https://github.com/gildas-lormeau/single-file-cli.
 
 ## Integration with user scripts
 
-You can execute a user script just before (and after) SingleFile saves a page.
+You can execute a user script just before (and after) 沧澜 saves a page.
 For more info, see
-https://github.com/gildas-lormeau/SingleFile/wiki/How-to-execute-a-user-script-before-a-page-is-saved.
+https://github.com/gildas-lormeau/沧澜/wiki/How-to-execute-a-user-script-before-a-page-is-saved.
 
 ## File format comparison
 
@@ -140,7 +140,7 @@ Footnotes:
 
 ⁴ An option must be enabled in the extension
 
-## Projects using/compatible with SingleFile
+## Projects using/compatible with 沧澜
 
 - ArchiveBox - Open-source self-hosted web archiving:
   https://github.com/ArchiveBox/ArchiveBox
@@ -159,23 +159,23 @@ Footnotes:
 - obsidian-html-plugin - Plugin for reading HTML pages in Obsidian:
   https://github.com/nuthrash/obsidian-html-plugin
 - Org-Dex.el - Emacs package designed to enhance Org-mode by integrating 
-  SingleFile CLI: https://github.com/nitincodery/org-dex.el
+  沧澜 CLI: https://github.com/nitincodery/org-dex.el
 - Petal Cite Web Importer - Browser extension to save PDFs and capture web pages
   in Petal Cite: https://github.com/ks-collab/cite-extension
 - Pocket Search Engine - Semantic search app for Android that works entirely 
   offline: https://play.google.com/store/apps/details?id=com.pocketsearchengine.app
 - singlefile2trilium - Tool to save faithful copy of a web page as a Trilium
-  note with SingleFile: https://github.com/nil0x42/singlefile2trilium
-- SingleFileMac - Integration of SingleFile in a swift application using
-  webkit: https://github.com/david-littlefield/SingleFileMac
-- SingleFile MV3 CDP Patched - fork of SingleFile patched to allow programmatic 
-  control with Chrome DevTools Protocol: https://github.com/Cosmologist/SingleFile-MV3-CDP-Patched
-- SingleFile MCP - Model Context Protocol (MCP) server that provides intelligent web
+  note with 沧澜: https://github.com/nil0x42/singlefile2trilium
+- 沧澜Mac - Integration of 沧澜 in a swift application using
+  webkit: https://github.com/david-littlefield/沧澜Mac
+- 沧澜 MV3 CDP Patched - fork of 沧澜 patched to allow programmatic 
+  control with Chrome DevTools Protocol: https://github.com/Cosmologist/沧澜-MV3-CDP-Patched
+- 沧澜 MCP - Model Context Protocol (MCP) server that provides intelligent web
   content extraction using single-file and trafilatura: https://github.com/kwinsch/singlefile-mcp
-- Trilium-SingleFile - An addon for Trilium Notes to easily import SingleFile 
-  html pages: https://github.com/rauenzi/Trilium-SingleFile
-- Trilium Simple SingleFile Renderer - A plugin to add a new Template note to
-  Trilium for render file created by SingleFile:
+- Trilium-沧澜 - An addon for Trilium Notes to easily import 沧澜 
+  html pages: https://github.com/rauenzi/Trilium-沧澜
+- Trilium Simple 沧澜 Renderer - A plugin to add a new Template note to
+  Trilium for render file created by 沧澜:
   https://github.com/xnohat/trilium-simple-singlefile-renderer
 - web document - Browser extension for saving web documents locally, allowing
   you to access them offline and quickly search for webpage:
@@ -186,11 +186,11 @@ Footnotes:
 
 ## Privacy Policy
 
-See https://github.com/gildas-lormeau/SingleFile/blob/master/privacy.md
+See https://github.com/gildas-lormeau/沧澜/blob/master/privacy.md
 
 ## Contributors
 
-See https://github.com/gildas-lormeau/SingleFile/blob/master/contributors.md
+See https://github.com/gildas-lormeau/沧澜/blob/master/contributors.md
 
 ## Code derived from third party projects
 
@@ -212,9 +212,9 @@ See https://github.com/gildas-lormeau/SingleFile/blob/master/contributors.md
 
 ## License
 
-SingleFile is licensed under AGPL. Code derived from third-party projects is
+沧澜 is licensed under AGPL. Code derived from third-party projects is
 licensed under MIT. Please contact me at gildas.lormeau &lt;at&gt; gmail.com if
-you are interested in licensing the SingleFile code for a commercial service or
+you are interested in licensing the 沧澜 code for a commercial service or
 product.
 
 Suggestions are welcome :)

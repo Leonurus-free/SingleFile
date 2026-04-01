@@ -56,8 +56,8 @@
 		"description": "Command label: 'Custom shortcut #10'"
 	},
 	"menuSavePage": {
-		"message": "Sayfayı SingleFile ile kaydet",
-		"description": "Menu entry: 'Save page with SingleFile'"
+		"message": "Sayfayı 沧澜 ile kaydet",
+		"description": "Menu entry: 'Save page with 沧澜'"
 	},
 	"menuSaveSelectedLinks": {
 		"message": "Seçilen bağlantıları kaydet",
@@ -101,7 +101,7 @@
 	},
 	"menuSaveTabs": {
 		"message": "Sekmeleri kaydet",
-		"description": "Menu entry (SingleFile button only): 'Save tabs'"
+		"description": "Menu entry (沧澜 button only): 'Save tabs'"
 	},
 	"menuSaveSelectedTabs": {
 		"message": "Seçili sekmeleri kaydet",
@@ -140,8 +140,8 @@
 		"description": "Menu entry: 'Auto-save' > Auto-save all tabs'"
 	},
 	"buttonDefaultTooltip": {
-		"message": "Sayfayı SingleFile ile kaydet",
-		"description": "Button title: 'Save page with SingleFile'"
+		"message": "Sayfayı 沧澜 ile kaydet",
+		"description": "Button title: 'Save page with 沧澜'"
 	},
 	"buttonBlockedBadge": {
 		"message": "🚫",
@@ -149,11 +149,11 @@
 	},
 	"buttonBlockedTooltip": {
 		"message": "Bu sayfa SinglePage ile kaydedilemiyor",
-		"description": "Button title: 'This page cannot be saved with SingleFile'"
+		"description": "Button title: 'This page cannot be saved with 沧澜'"
 	},
 	"buttonInitializingTooltip": {
-		"message": "SingleFile Başlatılıyor",
-		"description": "Button title during initialization: 'Initializing SingleFile (x/2)'"
+		"message": "沧澜 Başlatılıyor",
+		"description": "Button title during initialization: 'Initializing 沧澜 (x/2)'"
 	},
 	"buttonInitializingBadge": {
 		"message": "•••",
@@ -592,8 +592,8 @@
 		"description": "Options page label: 'period (s)'"
 	},
 	"optionAutoSaveExternalSave": {
-		"message": "sayfayı SingleFile Companion ile kaydedin",
-		"description": "Options page label: 'save the page with SingleFile Companion'"
+		"message": "sayfayı 沧澜 Companion ile kaydedin",
+		"description": "Options page label: 'save the page with 沧澜 Companion'"
 	},
 	"optionsEditorSubTitle": {
 		"message": "Ek açıklama düzenleyici",
@@ -608,8 +608,8 @@
 		"description": "Options page label: 'open saved pages in a new tab'"
 	},
 	"optionAutoOpenEditor": {
-		"message": "açıklama düzenleyicide SingleFile ile kaydedilen sayfaları açın",
-		"description": "Options page label: 'open pages saved with SingleFile in the annotation editor'"
+		"message": "açıklama düzenleyicide 沧澜 ile kaydedilen sayfaları açın",
+		"description": "Options page label: 'open pages saved with 沧澜 in the annotation editor'"
 	},
 	"optionDefaultEditorMode": {
 		"message": "varsayılan mod",
@@ -708,7 +708,7 @@
 		"description": "Options page label: 'add proof of existence'"
 	},
 	"optionsAddProofConfirm": {
-		"message": "SingleFile'ın Woleet API'ye kaydedeceğiniz her sayfanın bir SHA256 hash'ini göndermesine izin verdiğinizi onaylayın. Bu özellikle ilgili daha fazla bilgiyi yardım sayfasında veya seçeneğin yanındaki soru işaretine tıklayarak bulabilirsiniz.",
+		"message": "沧澜'ın Woleet API'ye kaydedeceğiniz her sayfanın bir SHA256 hash'ini göndermesine izin verdiğinizi onaylayın. Bu özellikle ilgili daha fazla bilgiyi yardım sayfasında veya seçeneğin yanındaki soru işaretine tıklayarak bulabilirsiniz.",
 		"description": "Popup text displayed wen enabling the option 'add proof of existence'"
 	},
 	"optionWoleetKey": {
@@ -796,8 +796,8 @@
 		"description": "Options page label: 'authentication token'"
 	},
 	"optionSaveWithCompanion": {
-		"message": "SingleFile Companion ile kaydet",
-		"description": "Options page label: 'save with SingleFile Companion'"
+		"message": "沧澜 Companion ile kaydet",
+		"description": "Options page label: 'save with 沧澜 Companion'"
 	},
 	"optionSaveCreatedBookmarks": {
 		"message": "yeni oluşturulan yer iminin sayfasını kaydet",
@@ -880,8 +880,8 @@
 		"description": "Width of the log panel in pixels, it should be adjusted for the longest label beginning with 'log' (e.g. 'logPanelDeferredImages')"
 	},
 	"topPanelError": {
-		"message": "SingleFile hata: ",
-		"description": "Label 'SingleFile error: ' in the top panel when displaying an error message"
+		"message": "沧澜 hata: ",
+		"description": "Label '沧澜 error: ' in the top panel when displaying an error message"
 	},
 	"topPanelEmbeddedImageButton": {
 		"message": "Resmi aç...",

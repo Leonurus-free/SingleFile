@@ -59,6 +59,7 @@ async function downloadPage(pageData, options) {
 		pageData.content = "\ufeff" + pageData.content;
 	}
 	const embeddedImage = options.embeddedImage;
+	// 构建消息对象，传递所有必要的选项到后台脚本
 	const message = {
 		method: "downloads.download",
 		taskId: options.taskId,
@@ -120,6 +121,11 @@ async function downloadPage(pageData, options) {
 		S3Bucket: options.S3Bucket,
 		S3AccessKey: options.S3AccessKey,
 		S3SecretKey: options.S3SecretKey,
+		// 沧澜平台相关参数
+		saveToCanglang: options.saveToCanglang,           // 是否保存到沧澜平台
+		canglangDomain: options.canglangDomain,           // 沧澜平台域名
+		canglangApiUrl: options.canglangApiUrl,           // 沧澜平台 API 地址
+		// 注意：Token 由后台脚本自动从 browser.storage 读取，无需从这里传递
 		infobarPositionAbsolute: options.infobarPositionAbsolute,
 		infobarPositionTop: options.infobarPositionTop,
 		infobarPositionBottom: options.infobarPositionBottom,
@@ -132,7 +138,8 @@ async function downloadPage(pageData, options) {
 		browser.runtime.sendMessage({ method: "ping" }).then(() => { });
 	}, 15000);
 	if (options.compressContent) {
-		if ((!options.backgroundSave || options.saveToGDrive || options.saveToGitHub || options.saveWithCompanion || options.saveWithWebDAV || options.saveWithMCP || options.saveToDropbox || options.saveToRestFormApi || options.saveToS3) && options.confirmFilename && !options.openEditor) {
+		// 如果是云端保存且需要确认文件名，则提示用户输入文件名
+		if ((!options.backgroundSave || options.saveToGDrive || options.saveToGitHub || options.saveWithCompanion || options.saveWithWebDAV || options.saveWithMCP || options.saveToDropbox || options.saveToRestFormApi || options.saveToS3 || options.saveToCanglang) && options.confirmFilename && !options.openEditor) {
 			pageData.filename = ui.prompt("Save as", pageData.filename);
 		}
 		if (pageData.filename) {
@@ -169,9 +176,11 @@ async function downloadPage(pageData, options) {
 			browser.runtime.sendMessage({ method: "ui.processCancelled" });
 		}
 	} else {
-		if ((options.backgroundSave && !options.sharePage) || options.openEditor || options.saveToGDrive || options.saveToGitHub || options.saveWithCompanion || options.saveWithWebDAV || options.saveWithMCP || options.saveToDropbox || options.saveToRestFormApi || options.saveToS3) {
+		// 处理非压缩内容的保存逻辑
+		if ((options.backgroundSave && !options.sharePage) || options.openEditor || options.saveToGDrive || options.saveToGitHub || options.saveWithCompanion || options.saveWithWebDAV || options.saveWithMCP || options.saveToDropbox || options.saveToRestFormApi || options.saveToS3 || options.saveToCanglang) {
 			let filename = pageData.filename;
-			if ((options.saveToGDrive || options.saveToGitHub || options.saveWithCompanion || options.saveWithWebDAV || options.saveWithMCP || options.saveToDropbox || options.saveToRestFormApi || options.saveToS3) && options.confirmFilename && !options.openEditor) {
+			// 如果是云端保存且需要确认文件名，则提示用户输入文件名
+			if ((options.saveToGDrive || options.saveToGitHub || options.saveWithCompanion || options.saveWithWebDAV || options.saveWithMCP || options.saveToDropbox || options.saveToRestFormApi || options.saveToS3 || options.saveToCanglang) && options.confirmFilename && !options.openEditor) {
 				filename = ui.prompt("Save as", pageData.filename);
 			}
 			if (filename) {

@@ -56,7 +56,7 @@
 		"description": "Command label: 'Custom shortcut #10'"
 	},
 	"menuSavePage": {
-		"message": "使用 SingleFile 保存页面",
+		"message": "使用沧澜保存页面",
 		"description": "Menu entry: 'Save page with SingleFile'"
 	},
 	"menuSaveSelectedLinks": {
@@ -140,7 +140,7 @@
 		"description": "Menu entry: 'Auto-save' > Auto-save all tabs'"
 	},
 	"buttonDefaultTooltip": {
-		"message": "使用 SingleFile 保存页面",
+		"message": "使用沧澜保存页面",
 		"description": "Button title: 'Save page with SingleFile'"
 	},
 	"buttonBlockedBadge": {
@@ -148,11 +148,11 @@
 		"description": "Button badge when the page is blocked: '🚫'"
 	},
 	"buttonBlockedTooltip": {
-		"message": "SingleFile 无法保存此页面",
+		"message": "沧澜无法保存此页面",
 		"description": "Button title: 'This page cannot be saved with SingleFile'"
 	},
 	"buttonInitializingTooltip": {
-		"message": "正在初始化 SingleFile",
+		"message": "正在初始化沧澜",
 		"description": "Button title during initialization: 'Initializing SingleFile (x/2)'"
 	},
 	"buttonInitializingBadge": {
@@ -192,7 +192,7 @@
 		"description": "Options sub-title: 'User interface'"
 	},
 	"optionAddMenuEntry": {
-		"message": "在页面的上下文菜单中添加 SingleFile 条目",
+		"message": "在页面的上下文菜单中添加沧澜条目",
 		"description": "Options page label: 'add entry in the context menu of the webpage'"
 	},
 	"optionDisplayShadow": {
@@ -592,7 +592,7 @@
 		"description": "Options page label: 'period (s)'"
 	},
 	"optionAutoSaveExternalSave": {
-		"message": "使用 SingleFile Companion 保存页面",
+		"message": "使用沧澜 Companion 保存页面",
 		"description": "Options page label: 'save the page with SingleFile Companion'"
 	},
 	"optionsEditorSubTitle": {
@@ -608,7 +608,7 @@
 		"description": "Options page label: 'open saved pages in a new tab'"
 	},
 	"optionAutoOpenEditor": {
-		"message": "在标注编辑器中打开用 SingleFile 保存的页面",
+		"message": "在标注编辑器中打开用沧澜保存的页面",
 		"description": "Options page label: 'open pages saved with SingleFile in the annotation editor'"
 	},
 	"optionDefaultEditorMode": {
@@ -708,7 +708,7 @@
 		"description": "Options page label: 'add proof of existence'"
 	},
 	"optionsAddProofConfirm": {
-		"message": "请确认您是否允许 SingleFile 将您要保存的每个页面的 SHA256 哈希值发送给 Woleet API 。您可以在帮助页面或者通过点击该选项旁的问号找到此功能的更多信息。",
+		"message": "请确认您是否允许沧澜将您要保存的每个页面的 SHA256 哈希值发送给 Woleet API 。您可以在帮助页面或者通过点击该选项旁的问号找到此功能的更多信息。",
 		"description": "Popup text displayed wen enabling the option 'add proof of existence'"
 	},
 	"optionWoleetKey": {
@@ -796,7 +796,7 @@
 		"description": "Options page label: 'authentication token'"
 	},
 	"optionSaveWithCompanion": {
-		"message": "使用 SingleFile Companion 保存",
+		"message": "使用沧澜 Companion 保存",
 		"description": "Options page label: 'save with SingleFile Companion'"
 	},
 	"optionSaveCreatedBookmarks": {
@@ -880,7 +880,7 @@
 		"description": "Width of the log panel in pixels, it should be adjusted for the longest label beginning with 'log' (e.g. 'logPanelDeferredImages')"
 	},
 	"topPanelError": {
-		"message": "SingleFile 错误：",
+		"message": "沧澜错误：",
 		"description": "Label 'SingleFile error: ' in the top panel when displaying an error message"
 	},
 	"topPanelEmbeddedImageButton": {

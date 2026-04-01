@@ -162,4 +162,18 @@ export default [{
 		format: "iife",
 		plugins: [terser()]
 	}]
+}, {
+	input: ["src/core/content/canglang-token-sync.js"],
+	output: [{
+		file: "lib/canglang-token-sync.js",
+		format: "iife",
+		plugins: [terser()]
+	}]
+}, {
+	input: ["src/core/content/toast-notification.js"],
+	output: [{
+		file: "lib/toast-notification.js",
+		format: "iife",
+		plugins: [terser()]
+	}]
 }];

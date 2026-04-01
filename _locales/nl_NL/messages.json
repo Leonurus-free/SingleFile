@@ -56,8 +56,8 @@
 		"description": "Command label: 'Custom shortcut #10'"
 	},
 	"menuSavePage": {
-		"message": "Sla pagina op met SingleFile",
-		"description": "Menu entry: 'Save page with SingleFile'"
+		"message": "Sla pagina op met 沧澜",
+		"description": "Menu entry: 'Save page with 沧澜'"
 	},
 	"menuSaveSelectedLinks": {
 		"message": "Sla geselecteerde links op",
@@ -101,7 +101,7 @@
 	},
 	"menuSaveTabs": {
 		"message": "Sla tabbladen op",
-		"description": "Menu entry (SingleFile button only): 'Save tabs'"
+		"description": "Menu entry (沧澜 button only): 'Save tabs'"
 	},
 	"menuSaveSelectedTabs": {
 		"message": "Sla geselecteerde tabbladen op",
@@ -140,20 +140,20 @@
 		"description": "Menu entry: 'Auto-save' > Auto-save all tabs'"
 	},
 	"buttonDefaultTooltip": {
-		"message": "Sla pagina op met SingleFile",
-		"description": "Button title: 'Save page with SingleFile'"
+		"message": "Sla pagina op met 沧澜",
+		"description": "Button title: 'Save page with 沧澜'"
 	},
 	"buttonBlockedBadge": {
 		"message": "🚫",
 		"description": "Button badge when the page is blocked: '🚫'"
 	},
 	"buttonBlockedTooltip": {
-		"message": "Deze pagina kan niet worden opgeslagen met SingleFile",
-		"description": "Button title: 'This page cannot be saved with SingleFile'"
+		"message": "Deze pagina kan niet worden opgeslagen met 沧澜",
+		"description": "Button title: 'This page cannot be saved with 沧澜'"
 	},
 	"buttonInitializingTooltip": {
-		"message": "SingleFile initialiseren",
-		"description": "Button title during initialization: 'Initializing SingleFile (x/2)'"
+		"message": "沧澜 initialiseren",
+		"description": "Button title during initialization: 'Initializing 沧澜 (x/2)'"
 	},
 	"buttonInitializingBadge": {
 		"message": "•••",
@@ -592,8 +592,8 @@
 		"description": "Options page label: 'period (s)'"
 	},
 	"optionAutoSaveExternalSave": {
-		"message": "pagina opslaan met SingleFile Companion",
-		"description": "Options page label: 'save the page with SingleFile Companion'"
+		"message": "pagina opslaan met 沧澜 Companion",
+		"description": "Options page label: 'save the page with 沧澜 Companion'"
 	},
 	"optionsEditorSubTitle": {
 		"message": "Annotatie-editor",
@@ -608,8 +608,8 @@
 		"description": "Options page label: 'open saved pages in a new tab'"
 	},
 	"optionAutoOpenEditor": {
-		"message": "open pagina's opgeslagen met SingleFile in de annotatie-editor",
-		"description": "Options page label: 'open pages saved with SingleFile in the annotation editor'"
+		"message": "open pagina's opgeslagen met 沧澜 in de annotatie-editor",
+		"description": "Options page label: 'open pages saved with 沧澜 in the annotation editor'"
 	},
 	"optionDefaultEditorMode": {
 		"message": "standaardmodus",
@@ -708,7 +708,7 @@
 		"description": "Options page label: 'add proof of existence'"
 	},
 	"optionsAddProofConfirm": {
-		"message": "Bevestig dat je SingleFile toestaat een SHA256-hash van elke pagina die je opslaat naar de Woleet API te sturen. Meer informatie vind je op de helppagina of door op het vraagteken naast de optie te klikken.",
+		"message": "Bevestig dat je 沧澜 toestaat een SHA256-hash van elke pagina die je opslaat naar de Woleet API te sturen. Meer informatie vind je op de helppagina of door op het vraagteken naast de optie te klikken.",
 		"description": "Popup text displayed wen enabling the option 'add proof of existence'"
 	},
 	"optionWoleetKey": {
@@ -796,8 +796,8 @@
 		"description": "Options page label: 'authentication token'"
 	},
 	"optionSaveWithCompanion": {
-		"message": "opslaan met SingleFile Companion",
-		"description": "Options page label: 'save with SingleFile Companion'"
+		"message": "opslaan met 沧澜 Companion",
+		"description": "Options page label: 'save with 沧澜 Companion'"
 	},
 	"optionSaveCreatedBookmarks": {
 		"message": "bewaar de pagina van een nieuw gemaakte bladwijzer",
@@ -880,8 +880,8 @@
 		"description": "Width of the log panel in pixels, it should be adjusted for the longest label beginning with 'log' (e.g. 'logPanelDeferredImages')"
 	},
 	"topPanelError": {
-		"message": "SingleFile fout: ",
-		"description": "Label 'SingleFile error: ' in the top panel when displaying an error message"
+		"message": "沧澜 fout: ",
+		"description": "Label '沧澜 error: ' in the top panel when displaying an error message"
 	},
 	"topPanelEmbeddedImageButton": {
 		"message": "Afbeelding openen...",

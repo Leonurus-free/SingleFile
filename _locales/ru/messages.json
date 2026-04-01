@@ -57,7 +57,7 @@
 	},
 	"menuSavePage": {
 		"message": "Сохранить страницу",
-		"description": "Menu entry: 'Save page with SingleFile'"
+		"description": "Menu entry: 'Save page with 沧澜'"
 	},
 	"menuSaveSelectedLinks": {
 		"message": "Сохранить выбранные ссылки",
@@ -101,7 +101,7 @@
 	},
 	"menuSaveTabs": {
 		"message": "Сохранить вкладки",
-		"description": "Menu entry (SingleFile button only): 'Save tabs'"
+		"description": "Menu entry (沧澜 button only): 'Save tabs'"
 	},
 	"menuSaveSelectedTabs": {
 		"message": "Сохранить выбранные вкладки",
@@ -140,20 +140,20 @@
 		"description": "Menu entry: 'Auto-save' > Auto-save all tabs'"
 	},
 	"buttonDefaultTooltip": {
-		"message": "Сохранить страницу с помощью SingleFile",
-		"description": "Button title: 'Save page with SingleFile'"
+		"message": "Сохранить страницу с помощью 沧澜",
+		"description": "Button title: 'Save page with 沧澜'"
 	},
 	"buttonBlockedBadge": {
 		"message": "🚫",
 		"description": "Button badge when the page is blocked: '🚫'"
 	},
 	"buttonBlockedTooltip": {
-		"message": "Эта страница не может быть сохранена SingleFile",
-		"description": "Button title: 'This page cannot be saved with SingleFile'"
+		"message": "Эта страница не может быть сохранена 沧澜",
+		"description": "Button title: 'This page cannot be saved with 沧澜'"
 	},
 	"buttonInitializingTooltip": {
-		"message": "Инициализация SingleFile",
-		"description": "Button title during initialization: 'Initializing SingleFile (x/2)'"
+		"message": "Инициализация 沧澜",
+		"description": "Button title during initialization: 'Initializing 沧澜 (x/2)'"
 	},
 	"buttonInitializingBadge": {
 		"message": "•••",
@@ -592,8 +592,8 @@
 		"description": "Options page label: 'period (s)'"
 	},
 	"optionAutoSaveExternalSave": {
-		"message": "сохранять страницу с помощью SingleFile Companion",
-		"description": "Options page label: 'save the page with SingleFile Companion'"
+		"message": "сохранять страницу с помощью 沧澜 Companion",
+		"description": "Options page label: 'save the page with 沧澜 Companion'"
 	},
 	"optionsEditorSubTitle": {
 		"message": "Редактор аннотаций",
@@ -608,8 +608,8 @@
 		"description": "Options page label: 'open saved pages in a new tab'"
 	},
 	"optionAutoOpenEditor": {
-		"message": "сохранять открытые страницы из редактора аннотаций SingleFile",
-		"description": "Options page label: 'open pages saved with SingleFile in the annotation editor'"
+		"message": "сохранять открытые страницы из редактора аннотаций 沧澜",
+		"description": "Options page label: 'open pages saved with 沧澜 in the annotation editor'"
 	},
 	"optionDefaultEditorMode": {
 		"message": "режим по умолчанию",
@@ -708,7 +708,7 @@
 		"description": "Options page label: 'add proof of existence'"
 	},
 	"optionsAddProofConfirm": {
-		"message": "Подтвердите, что разрешаете SingleFile отправлять в Woleet API SHA256-хеш каждой сохраняемой вами страницы. Дополнительную информацию об этой функции можно найти на странице помощи или нажав на знак вопроса рядом с параметром.",
+		"message": "Подтвердите, что разрешаете 沧澜 отправлять в Woleet API SHA256-хеш каждой сохраняемой вами страницы. Дополнительную информацию об этой функции можно найти на странице помощи или нажав на знак вопроса рядом с параметром.",
 		"description": "Popup text displayed wen enabling the option 'add proof of existence'"
 	},
 	"optionWoleetKey": {
@@ -796,8 +796,8 @@
 		"description": "Options page label: 'authentication token'"
 	},
 	"optionSaveWithCompanion": {
-		"message": "сохранять с помощью SingleFile Companion",
-		"description": "Options page label: 'save with SingleFile Companion'"
+		"message": "сохранять с помощью 沧澜 Companion",
+		"description": "Options page label: 'save with 沧澜 Companion'"
 	},
 	"optionSaveCreatedBookmarks": {
 		"message": "сохранить страницу недавно созданной закладки",
@@ -880,8 +880,8 @@
 		"description": "Width of the log panel in pixels, it should be adjusted for the longest label beginning with 'log' (e.g. 'logPanelDeferredImages')"
 	},
 	"topPanelError": {
-		"message": "Ошибка SingleFile: ",
-		"description": "Label 'SingleFile error: ' in the top panel when displaying an error message"
+		"message": "Ошибка 沧澜: ",
+		"description": "Label '沧澜 error: ' in the top panel when displaying an error message"
 	},
 	"topPanelEmbeddedImageButton": {
 		"message": "Открыть изображение...",
