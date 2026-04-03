@@ -84,7 +84,8 @@ async function upload(userName, repositoryName, branch, path, content, options) 
 		await pendingPush;
 	}
 	try {
-		pendingPush = await createContent({ path, content });
+		pendingPush = createContent({ path, content });
+		await pendingPush;
 	} finally {
 		pendingPush = null;
 	}

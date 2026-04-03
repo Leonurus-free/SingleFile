@@ -1,7 +1,7 @@
 {
 	"name": "沧澜",
 	"author": "Gildas Lormeau",
-	"homepage_url": "https://www.getsinglefile.com",
+	"homepage_url": "http://192.168.100.100:15666",
 	"icons": {
 		"16": "src/ui/resources/icon_16.png",
 		"32": "src/ui/resources/icon_32.png",
@@ -9,7 +9,7 @@
 		"64": "src/ui/resources/icon_64.png",
 		"128": "src/ui/resources/icon_128.png"
 	},
-	"version": "1.22.92",
+	"version": "1.22.98",
 	"description": "__MSG_extensionDescription__",
 	"content_scripts": [
 		{
@@ -31,9 +31,7 @@
 			],
 			"run_at": "document_start",
 			"js": [
-				"lib/chrome-browser-polyfill.js",
-				"lib/single-file-frames.js",
-				"lib/single-file-extension-frames.js"
+				"lib/single-file-frames.bundle.js"
 			],
 			"all_frames": true,
 			"match_about_blank": true,
@@ -56,33 +54,26 @@
 			"matches": [
 				"<all_urls>"
 			],
-			"run_at": "document_start",
+			"run_at": "document_idle",
 			"js": [
-				"lib/web-stream.js",
-				"lib/chrome-browser-polyfill.js",
-				"lib/single-file-bootstrap.js",
-				"lib/single-file-extension-bootstrap.js",
-				"lib/single-file-infobar.js",
+				"lib/single-file-bootstrap.bundle.js",
 				"lib/toast-notification.js"
-			]
+			],
+			"all_frames": false
 		}
 	],
 	"background": {
-		"page": "src/core/bg/background.html"
+		"service_worker": "lib/single-file-extension-background.js"
 	},
-	"sidebar_action": {
-		"browser_style": true,
-		"default_title": "沧澜",
-		"default_panel": "src/ui/pages/panel.html",
-		"default_icon": "src/ui/resources/icon_128.png",
-		"open_at_install": false
+	"side_panel": {
+		"default_path": "src/ui/pages/panel.html"
 	},
 	"options_ui": {
 		"browser_style": true,
 		"page": "src/ui/pages/options.html",
 		"open_in_tab": false
 	},
-	"browser_action": {
+	"action": {
 		"default_icon": {
 			"16": "src/ui/resources/icon_16.png",
 			"32": "src/ui/resources/icon_32.png",
@@ -137,33 +128,49 @@
 		}
 	},
 	"web_accessible_resources": [
-		"lib/single-file-infobar.js",
-		"lib/single-file-extension-editor.js",
-		"lib/single-file-extension-editor-helper.js",
-		"lib/single-file-zip.min.js",
-		"lib/single-file-z-worker.js",
-		"lib/web-stream.js",
-		"src/lib/readability/Readability.js",
-		"src/lib/readability/Readability-readerable.js",
-		"src/ui/pages/editor-note-web.css",
-		"src/ui/pages/editor-mask-web.css",
-		"src/ui/pages/editor-frame-web.css"
+		{
+			"matches": [
+				"<all_urls>"
+			],
+			"resources": [
+				"lib/single-file-infobar.js",
+				"lib/single-file-extension-editor.js",
+				"lib/single-file-extension-editor-helper.js",
+				"lib/single-file-zip.min.js",
+				"lib/single-file-z-worker.js",
+				"src/lib/readability/Readability.js",
+				"src/lib/readability/Readability-readerable.js",
+				"src/ui/pages/editor-note-web.css",
+				"src/ui/pages/editor-mask-web.css",
+				"src/ui/pages/editor-frame-web.css"
+			]
+		}
 	],
+	"oauth2": {
+		"client_id": "207618107333-7tjs1im1pighftpoepea2kvkubnfjj44.apps.googleusercontent.com",
+		"scopes": [
+			"https://www.googleapis.com/auth/drive.file"
+		]
+	},
 	"permissions": [
-		"identity",
-		"menus",
+		"contextMenus",
 		"downloads",
 		"storage",
 		"tabs",
-		"notifications",
-		"<all_urls>"
+		"activeTab",
+		"scripting",
+		"offscreen",
+		"sidePanel",
+		"declarativeNetRequest"
 	],
 	"optional_permissions": [
+		"identity",
 		"clipboardWrite",
 		"nativeMessaging",
-		"bookmarks",
-		"webRequest",
-		"webRequestBlocking"
+		"bookmarks"
+	],
+	"host_permissions": [
+		"<all_urls>"
 	],
 	"browser_specific_settings": {
 		"gecko": {
@@ -171,7 +178,8 @@
 		},
 		"gecko_android": {}
 	},
+	"devtools_page": "src/core/devtools/devtools.html",
 	"incognito": "spanning",
-	"manifest_version": 2,
+	"manifest_version": 3,
 	"default_locale": "en"
 }

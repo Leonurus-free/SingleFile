@@ -24,79 +24,22 @@
 /* global browser, document */
 
 let BACKGROUND_SAVE_SUPPORTED,
-	AUTOCLOSE_SUPPORTED,
-	AUTO_SAVE_SUPPORTED,
-	AUTO_OPEN_EDITOR_SUPPORTED,
-	INFOBAR_SUPPORTED,
-	BOOKMARKS_API_SUPPORTED,
-	IDENTITY_API_SUPPORTED,
-	CLIPBOARD_API_SUPPORTED,
-	NATIVE_API_API_SUPPORTED,
-	WEB_BLOCKING_API_SUPPORTED,
-	SHARE_API_SUPPORTED,
-	SELECTABLE_TABS_SUPPORTED;
+	SHARE_API_SUPPORTED;
 browser.runtime.sendMessage({ method: "config.getConstants" }).then(data => {
 	({
 		BACKGROUND_SAVE_SUPPORTED,
-		AUTOCLOSE_SUPPORTED,
-		AUTO_SAVE_SUPPORTED,
-		AUTO_OPEN_EDITOR_SUPPORTED,
-		INFOBAR_SUPPORTED,
-		BOOKMARKS_API_SUPPORTED,
-		IDENTITY_API_SUPPORTED,
-		CLIPBOARD_API_SUPPORTED,
-		NATIVE_API_API_SUPPORTED,
-		WEB_BLOCKING_API_SUPPORTED,
-		SHARE_API_SUPPORTED,
-		SELECTABLE_TABS_SUPPORTED
+		SHARE_API_SUPPORTED
 	} = data);
 	init();
 });
 
 function init() {
-	if (!AUTO_SAVE_SUPPORTED) {
-		document.getElementById("autoSaveSection").hidden = true;
-		document.getElementById("autoSaveOptions").hidden = true;
-		document.getElementById("autoSaveMenu").hidden = true;
-		document.getElementById("autoSaveHint").hidden = true;
-	}
-	if (!AUTOCLOSE_SUPPORTED) {
-		document.getElementById("autoCloseOption").hidden = true;
-	}
 	if (!BACKGROUND_SAVE_SUPPORTED) {
 		document.getElementById("backgroundSaveOption").hidden = true;
 		document.getElementById("confirmFilenameOption").hidden = true;
 		document.getElementById("filenameConflictActionOption").hidden = true;
 	}
-	if (!BOOKMARKS_API_SUPPORTED) {
-		document.getElementById("bookmarksSection").hidden = true;
-		document.getElementById("bookmarksOptions").hidden = true;
-	}
-	if (!AUTO_OPEN_EDITOR_SUPPORTED) {
-		document.getElementById("autoOpenEditorOption").hidden = true;
-	}
-	if (!INFOBAR_SUPPORTED) {
-		document.getElementById("displayInfobarOption").hidden = true;
-	}
-	if (!IDENTITY_API_SUPPORTED) {
-		document.getElementById("saveToGDriveOption").hidden = true;
-		document.getElementById("saveToGDriveHint").hidden = true;
-		document.getElementById("saveToDropboxOption").hidden = true;
-	}
-	if (!CLIPBOARD_API_SUPPORTED) {
-		document.getElementById("saveToClipboardOption").hidden = true;
-	}
-	if (!NATIVE_API_API_SUPPORTED) {
-		document.getElementById("saveWithCompanionOption").hidden = true;
-	}
-	if (!WEB_BLOCKING_API_SUPPORTED) {
-		document.getElementById("passReferrerOnErrorOption").hidden = true;
-	}
 	if (!SHARE_API_SUPPORTED) {
 		document.getElementById("sharePageOption").hidden = true;
-	}
-	if (!SELECTABLE_TABS_SUPPORTED) {
-		document.getElementById("selectableTabsMenu").hidden = true;
-		document.getElementById("shortcutsSection").hidden = true;
 	}
 }

@@ -21,7 +21,7 @@
  *   Source.
  */
 
-/* global browser, setTimeout, OffscreenCanvas, Image, URL */
+/* global browser, setTimeout, OffscreenCanvas, ImageData, fetch */
 
 import * as config from "./config.js";
 import * as autosave from "./autosave.js";
@@ -29,6 +29,7 @@ import * as business from "./business.js";
 import * as editor from "./editor.js";
 import * as tabsData from "./tabs-data.js";
 import * as ui from "./../../ui/bg/index.js";
+import * as offscreen from "./offscreen.js";
 
 const DELAY_MAYBE_INIT = 1500;
 
@@ -143,14 +144,12 @@ async function captureTab(tabId, options) {
 					format: "png"
 				});
 			}
-			const image = new Image();
-			await new Promise((resolve, reject) => {
-				image.onload = resolve;
-				image.onerror = event => reject(new Error(event.detail));
-				image.src = imageSrc;
-			});
 			const imageHeight = Math.min(canvasHeight - canvasY, canvasScrollStep);
-			context.drawImage(image, 0, canvasY, canvasWidth, imageHeight);
+			const imageBlobURI = (await offscreen.getImageData(imageSrc, canvasWidth, imageHeight)).url;
+			const imageRawData = await fetch(imageBlobURI).then(response => response.arrayBuffer());
+			await offscreen.revokeObjectURL(imageBlobURI);
+			const imageData = new ImageData(new Uint8ClampedArray(imageRawData), canvasWidth);
+			context.putImageData(imageData, 0, canvasY);
 			y += scrollYStep;
 			canvasY += canvasScrollStep;
 		}
@@ -168,6 +167,7 @@ async function captureTab(tabId, options) {
 		await browser.tabs.sendMessage(tabId, { method: "content.endScrollTo" });
 	}
 	if (canvas) {
-		return URL.createObjectURL(await canvas.convertToBlob({ type: "image/png" }));
+		const blob = await canvas.convertToBlob({ type: "image/png" });
+		return await offscreen.getBlobURL(Array.from(new Uint8Array(await blob.arrayBuffer())));
 	}
 }

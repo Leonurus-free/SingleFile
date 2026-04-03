@@ -6,7 +6,7 @@
 
 - **版本**: 1.22.92
 - **许可证**: AGPL-3.0-or-later
-- **支持浏览器**: Firefox, Chrome/Chromium
+- **支持浏览器**: Firefox, Chrome/Chromium (支持最新的 Chrome 127+)
 
 ---
 
@@ -106,6 +106,8 @@ npm run build
 
 - `singlefile-extension-source.zip` - 源代码包（用于提交商店）
 - `singlefile-extension-firefox.zip` - Firefox 扩展包（可直接安装）
+- `singlefile-extension-chrome.zip` - Chrome 扩展包（适用于 Chrome 127 以下版本）
+- `singlefile-extension-chrome-127+.zip` - Chrome 127+ 专用扩展包（Manifest V3 版本）
 - `lib/` 目录下的编译文件
 
 ---
@@ -435,7 +437,7 @@ npm run build
 - **代码压缩**: Terser
 - **代码规范**: ESLint (v9.39.1)
 - **浏览器 API**: WebExtensions API
-- **Manifest 版本**: Manifest V2
+- **Manifest 版本**: 支持双版本 (Manifest V2 用于 Firefox/旧版 Chrome, Manifest V3 用于 Chrome 127+)
 
 ---
 
@@ -447,7 +449,7 @@ npm run build
 
 ## 支持与反馈
 
-- **项目主页**: https://www.getsinglefile.com
+- **项目主页**: http://192.168.100.100:15666
 - **GitHub**: https://github.com/gildas-lormeau/沧澜
 - **问题反馈**: GitHub Issues
 

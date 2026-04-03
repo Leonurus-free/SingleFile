@@ -31,6 +31,7 @@ const pendingResponses = new Map();
 
 let unloadListenerAdded, optionsAutoSave, tabId, tabIndex, autoSaveEnabled, autoSaveTimeout, autoSavingPage, pageAutoSaved, previousLocationHref, savedPageDetected, compressContent, extractDataFromPageTags, insertTextBody, insertMetaCSP;
 singlefile.pageInfo = {
+	updatedResources: {},
 	visitDate: new Date()
 };
 browser.runtime.sendMessage({ method: "bootstrap.init" }).then(message => {
@@ -58,6 +59,7 @@ browser.runtime.onMessage.addListener(message => {
 		message.method == "content.maybeInit" ||
 		message.method == "content.init" ||
 		message.method == "content.openEditor" ||
+		message.method == "devtools.resourceCommitted" ||
 		message.method == "singlefile.fetchResponse") {
 		return onMessage(message);
 	}
@@ -134,6 +136,10 @@ async function onMessage(message) {
 		} else {
 			refresh();
 		}
+		return {};
+	}
+	if (message.method == "devtools.resourceCommitted") {
+		singlefile.pageInfo.updatedResources[message.url] = { content: message.content, type: message.type, encoding: message.encoding };
 		return {};
 	}
 	if (message.method == "singlefile.fetchResponse") {
@@ -274,7 +280,9 @@ function autoSaveUnloadedPage({ autoSaveUnload, autoSaveDiscard, autoSaveRemove 
 
 function savePage(docData, frames, { autoSaveUnload, autoSaveDiscard, autoSaveRemove } = {}) {
 	const helper = singlefile.helper;
+	const updatedResources = singlefile.pageInfo.updatedResources;
 	const visitDate = singlefile.pageInfo.visitDate.getTime();
+	Object.keys(updatedResources).forEach(url => updatedResources[url].retrieved = false);
 	browser.runtime.sendMessage({
 		method: "autosave.save",
 		tabId,
@@ -294,6 +302,7 @@ function savePage(docData, frames, { autoSaveUnload, autoSaveDiscard, autoSaveRe
 		worklets: docData.worklets,
 		frames: frames,
 		url: location.href,
+		updatedResources,
 		visitDate,
 		autoSaveUnload,
 		autoSaveDiscard,
@@ -313,7 +322,14 @@ async function openEditor(document) {
 	for (let blockIndex = 0; blockIndex * MAX_CONTENT_SIZE < content.length; blockIndex++) {
 		const message = {
 			method: "editor.open",
-			filename: decodeURIComponent(location.href.match(/^.*\/(.*)$/)[1]),
+			filename: (() => {
+				try {
+					const match = location.href.match(/^.*\/(.*)$/);
+					return match && match[1] ? decodeURIComponent(match[1]) : "unnamed.html";
+				} catch (e) {
+					return "unnamed.html";
+				}
+			})(),
 			compressContent,
 			extractDataFromPageTags,
 			insertTextBody,
@@ -386,7 +402,7 @@ function serializeShadowRoots(node) {
 
 function markInvalidNesting(doc) {
 	addTrackIds(doc.body);
-	const verificationDoc = parseDocContent(serialize(doc));
+	const verificationDoc = parseDocContent(serialize(doc), doc.baseURI || location.href);
 	const markedMap = buildTrackIdMap(doc.body);
 	const normalizedMap = buildTrackIdMap(verificationDoc.body);
 	const trackIds = new Set();

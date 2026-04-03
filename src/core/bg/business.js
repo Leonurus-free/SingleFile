@@ -21,14 +21,12 @@
  *   Source.
  */
 
-/* global browser */
+/* global browser, window, document */
 
 import * as config from "./config.js";
 import { autoSaveIsEnabled } from "./autosave-util.js";
 import * as editor from "./editor.js";
-import * as requests from "./requests.js";
 import * as ui from "./../../ui/bg/index.js";
-import { injectScript } from "./../../index.js";
 
 const ERROR_CONNECTION_ERROR_CHROMIUM = "Could not establish connection. Receiving end does not exist.";
 const ERROR_CONNECTION_LOST_CHROMIUM = "The message port closed before a response was received.";
@@ -39,9 +37,23 @@ const INJECT_SCRIPTS_STEP = 1;
 const EXECUTE_SCRIPTS_STEP = 2;
 const TASK_PENDING_STATE = "pending";
 const TASK_PROCESSING_STATE = "processing";
-
-const extensionScriptFiles = [
+const CONTENT_SCRIPTS = [
+	"lib/single-file.js",
 	"lib/single-file-extension.js"
+];
+const BOOTSTRAP_SCRIPTS_ALL_FRAMES = [
+	"lib/chrome-browser-polyfill.js",
+	"lib/single-file-frames.js",
+	"lib/single-file-extension-frames.js"
+];
+const BOOTSTRAP_SCRIPTS_ALL_FRAMES_MAIN_WORLD = [
+	"lib/single-file-hooks-frames.js"
+];
+const BOOTSTRAP_SCRIPTS = [
+	"lib/chrome-browser-polyfill.js",
+	"lib/single-file-bootstrap.js",
+	"lib/single-file-extension-bootstrap.js",
+	"lib/single-file-infobar.js"
 ];
 
 const tasks = [];
@@ -64,10 +76,9 @@ export {
 };
 
 async function saveSelectedLinks(tab) {
-	const tabOptions = { extensionScriptFiles, tabId: tab.id, tabIndex: tab.index };
 	let scriptsInjected;
 	try {
-		scriptsInjected = await injectScript(tab.id, tabOptions);
+		scriptsInjected = await injectScript(tab.id);
 		// eslint-disable-next-line no-unused-vars
 	} catch (error) {
 		// ignored
@@ -101,10 +112,6 @@ async function saveUrls(urls, options = {}) {
 			Object.keys(options).forEach(key => tabOptions[key] = options[key]);
 			tabOptions.autoClose = true;
 			tabOptions.originalUrl = url;
-			tabOptions.extensionScriptFiles = extensionScriptFiles;
-			if (tabOptions.passReferrerOnError) {
-				requests.enableReferrerOnError();
-			}
 			addTask({
 				tab: { url },
 				status: TASK_PENDING_STATE,
@@ -125,10 +132,6 @@ async function saveTabs(tabs, options = {}) {
 			Object.keys(options).forEach(key => tabOptions[key] = options[key]);
 			tabOptions.tabId = tabId;
 			tabOptions.tabIndex = tab.index;
-			tabOptions.extensionScriptFiles = extensionScriptFiles;
-			if (tabOptions.passReferrerOnError) {
-				requests.enableReferrerOnError();
-			}
 			const tabData = {
 				id: tab.id,
 				index: tab.index,
@@ -290,6 +293,58 @@ function onSaveEnd(taskId) {
 		}
 		taskInfo.done();
 	}
+}
+
+async function injectScript(tabId, options = {}, retry = true) {
+	let scriptsInjected;
+	const resultData = (await browser.scripting.executeScript({
+		target: { tabId },
+		func: () => Boolean(window.singlefile)
+	}))[0];
+	scriptsInjected = resultData && resultData.result;
+	if (!scriptsInjected) {
+		try {
+			await browser.scripting.executeScript({
+				target: { tabId, allFrames: true },
+				files: BOOTSTRAP_SCRIPTS_ALL_FRAMES
+			});
+			await browser.scripting.executeScript({
+				target: { tabId },
+				files: BOOTSTRAP_SCRIPTS
+			});
+			await browser.scripting.executeScript({
+				target: { tabId, allFrames: true },
+				files: BOOTSTRAP_SCRIPTS_ALL_FRAMES_MAIN_WORLD,
+				world: "MAIN"
+			});
+			if (retry) {
+				return await injectScript(tabId, options, false);
+			}
+			// eslint-disable-next-line no-unused-vars
+		} catch (error) {
+			// ignored
+		}
+	} else {
+		try {
+			await browser.scripting.executeScript({
+				target: { tabId },
+				files: CONTENT_SCRIPTS
+			});
+			// eslint-disable-next-line no-unused-vars
+		} catch (error) {
+			// ignored
+		}
+	}
+	if (scriptsInjected && options.frameId) {
+		await browser.scripting.executeScript({
+			target: {
+				tabId,
+				frameIds: [options.frameId]
+			},
+			func: () => document.documentElement.dataset.requestedFrameId = true
+		});
+	}
+	return scriptsInjected;
 }
 
 async function createTabAndWaitUntilComplete(createProperties) {

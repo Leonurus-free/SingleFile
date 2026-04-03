@@ -30,15 +30,6 @@ let DEFAULT_PROFILE_NAME,
 	DISABLED_PROFILE_NAME,
 	CURRENT_PROFILE_NAME,
 	BACKGROUND_SAVE_SUPPORTED,
-	AUTOCLOSE_SUPPORTED,
-	AUTO_SAVE_SUPPORTED,
-	AUTO_OPEN_EDITOR_SUPPORTED,
-	INFOBAR_SUPPORTED,
-	BOOKMARKS_API_SUPPORTED,
-	IDENTITY_API_SUPPORTED,
-	CLIPBOARD_API_SUPPORTED,
-	NATIVE_API_API_SUPPORTED,
-	WEB_BLOCKING_API_SUPPORTED,
 	SHARE_API_SUPPORTED;
 browser.runtime.sendMessage({ method: "config.getConstants" }).then(data => {
 	({
@@ -46,15 +37,6 @@ browser.runtime.sendMessage({ method: "config.getConstants" }).then(data => {
 		DISABLED_PROFILE_NAME,
 		CURRENT_PROFILE_NAME,
 		BACKGROUND_SAVE_SUPPORTED,
-		AUTOCLOSE_SUPPORTED,
-		AUTO_SAVE_SUPPORTED,
-		AUTO_OPEN_EDITOR_SUPPORTED,
-		INFOBAR_SUPPORTED,
-		BOOKMARKS_API_SUPPORTED,
-		IDENTITY_API_SUPPORTED,
-		CLIPBOARD_API_SUPPORTED,
-		NATIVE_API_API_SUPPORTED,
-		WEB_BLOCKING_API_SUPPORTED,
 		SHARE_API_SUPPORTED
 	} = data);
 	init();
@@ -159,6 +141,7 @@ const replaceBookmarkURLLabel = document.getElementById("replaceBookmarkURLLabel
 const allowedBookmarkFoldersLabel = document.getElementById("allowedBookmarkFoldersLabel");
 const ignoredBookmarkFoldersLabel = document.getElementById("ignoredBookmarkFoldersLabel");
 const createRootDirectoryLabel = document.getElementById("createRootDirectoryLabel");
+const disableCompressionLabel = document.getElementById("disableCompressionLabel");
 const preventAppendedDataLabel = document.getElementById("preventAppendedDataLabel");
 const passwordLabel = document.getElementById("passwordLabel");
 const titleLabel = document.getElementById("titleLabel");
@@ -320,6 +303,7 @@ const allowedBookmarkFoldersInput = document.getElementById("allowedBookmarkFold
 const ignoredBookmarkFoldersInput = document.getElementById("ignoredBookmarkFoldersInput");
 const fileFormatSelectInput = document.getElementById("fileFormatSelectInput");
 const createRootDirectoryInput = document.getElementById("createRootDirectoryInput");
+const disableCompressionInput = document.getElementById("disableCompressionInput");
 const preventAppendedDataInput = document.getElementById("preventAppendedDataInput");
 const passwordInput = document.getElementById("passwordInput");
 const groupDuplicateImagesInput = document.getElementById("groupDuplicateImagesInput");
@@ -607,7 +591,6 @@ saveWithMCPInput.addEventListener("click", () => disableDestinationPermissions([
 saveToRestFormApiInput.addEventListener("click", () => disableDestinationPermissions(["clipboardWrite", "nativeMessaging"]), false);
 sharePageInput.addEventListener("click", () => disableDestinationPermissions(["clipboardWrite", "nativeMessaging"]), false);
 saveCreatedBookmarksInput.addEventListener("click", saveCreatedBookmarks, false);
-passReferrerOnErrorInput.addEventListener("click", passReferrerOnError, false);
 autoSaveExternalSaveInput.addEventListener("click", () => enableExternalSave(autoSaveExternalSaveInput), false);
 saveWithCompanionInput.addEventListener("click", () => enableExternalSave(saveWithCompanionInput), false);
 saveToClipboardInput.addEventListener("click", onClickSaveToClipboard, false);
@@ -655,8 +638,7 @@ document.body.onchange = async event => {
 		target != ruleEditProfileInput &&
 		target != ruleEditAutoSaveProfileInput &&
 		target != showAutoSaveProfileInput &&
-		target != saveCreatedBookmarksInput &&
-		target != passReferrerOnErrorInput) {
+		target != saveCreatedBookmarksInput) {
 		if (target != profileNamesInput && target != showAllProfilesInput) {
 			await update();
 		}
@@ -783,6 +765,7 @@ replaceBookmarkURLLabel.textContent = browser.i18n.getMessage("optionReplaceBook
 allowedBookmarkFoldersLabel.textContent = browser.i18n.getMessage("optionAllowedBookmarkFolders");
 ignoredBookmarkFoldersLabel.textContent = browser.i18n.getMessage("optionIgnoredBookmarkFolders");
 createRootDirectoryLabel.textContent = browser.i18n.getMessage("optionCreateRootDirectory");
+disableCompressionLabel.textContent = browser.i18n.getMessage("optionDisableCompression");
 preventAppendedDataLabel.textContent = browser.i18n.getMessage("optionPreventAppendedData");
 passwordLabel.textContent = browser.i18n.getMessage("optionPassword");
 groupDuplicateImagesLabel.textContent = browser.i18n.getMessage("optionGroupDuplicateImages");
@@ -881,40 +864,10 @@ browser.runtime.sendMessage({ method: "tabsData.get" }).then(allTabsData => {
 getHelpContents();
 
 function init() {
-	if (!AUTO_SAVE_SUPPORTED) {
-		document.getElementById("autoSaveSection").hidden = true;
-		document.getElementById("showAutoSaveProfileOption").hidden = true;
-		rulesContainerElement.classList.add("compact");
-	}
-	if (!AUTOCLOSE_SUPPORTED) {
-		document.getElementById("autoCloseOption").hidden = true;
-	}
 	if (!BACKGROUND_SAVE_SUPPORTED) {
 		document.getElementById("backgroundSaveOptions").hidden = true;
 		document.getElementById("confirmFilenameOption").hidden = true;
 		document.getElementById("filenameConflictAction").hidden = true;
-	}
-	if (!BOOKMARKS_API_SUPPORTED) {
-		document.getElementById("bookmarksOptions").hidden = true;
-	}
-	if (!AUTO_OPEN_EDITOR_SUPPORTED) {
-		document.getElementById("autoOpenEditorOption").hidden = true;
-	}
-	if (!INFOBAR_SUPPORTED) {
-		document.getElementById("displayInfobarOption").hidden = true;
-	}
-	if (!IDENTITY_API_SUPPORTED) {
-		document.getElementById("saveToGDriveOption").hidden = true;
-		document.getElementById("saveToDropboxOption").hidden = true;
-	}
-	if (!CLIPBOARD_API_SUPPORTED) {
-		document.getElementById("saveToClipboardOption").hidden = true;
-	}
-	if (!NATIVE_API_API_SUPPORTED) {
-		document.getElementById("saveWithCompanionOption").hidden = true;
-	}
-	if (!WEB_BLOCKING_API_SUPPORTED) {
-		document.getElementById("passReferrerOnErrorOption").hidden = true;
 	}
 	if (!SHARE_API_SUPPORTED) {
 		document.getElementById("sharePageOption").hidden = true;
@@ -1153,6 +1106,8 @@ async function refresh(profileName) {
 		"self-extracting-zip-universal" : "self-extracting-zip" : "zip" : "html";
 	createRootDirectoryInput.checked = profileOptions.createRootDirectory;
 	createRootDirectoryInput.disabled = !profileOptions.compressContent;
+	disableCompressionInput.checked = profileOptions.disableCompression;
+	disableCompressionInput.disabled = !profileOptions.compressContent;
 	preventAppendedDataInput.checked = profileOptions.preventAppendedData;
 	preventAppendedDataInput.disabled = !profileOptions.compressContent && !profileOptions.selfExtractingArchive;
 	passwordInput.value = profileOptions.password;
@@ -1307,6 +1262,7 @@ async function update() {
 			ignoredBookmarkFolders: ignoredBookmarkFoldersInput.value.replace(/([^\\]),/g, "$1 ,").split(/[^\\],/).map(folder => folder.replace(/\\,/g, ",")),
 			compressContent: fileFormatSelectInput.value.includes("zip"),
 			createRootDirectory: createRootDirectoryInput.checked,
+			disableCompression: disableCompressionInput.checked,
 			preventAppendedData: preventAppendedDataInput.checked,
 			selfExtractingArchive: fileFormatSelectInput.value.includes("self-extracting"),
 			extractDataFromPage: fileFormatSelectInput.value == "self-extracting-zip-universal",
@@ -1452,35 +1408,6 @@ async function disableDestinationPermissions(permissions, disableGDrive = true, 
 		// eslint-disable-next-line no-unused-vars
 	} catch (error) {
 		//ignored
-	}
-}
-
-async function passReferrerOnError() {
-	if (passReferrerOnErrorInput.checked) {
-		passReferrerOnErrorInput.checked = false;
-		try {
-			const permissionGranted = await browser.permissions.request({ permissions: ["webRequest", "webRequestBlocking"] });
-			if (permissionGranted) {
-				passReferrerOnErrorInput.checked = true;
-				await update();
-				await refresh();
-				await browser.runtime.sendMessage({ method: "requests.enableReferrerOnError" });
-			} else {
-				await disableOption();
-			}
-			// eslint-disable-next-line no-unused-vars
-		} catch (error) {
-			await disableOption();
-		}
-	} else {
-		await disableOption();
-	}
-
-	async function disableOption() {
-		await update();
-		await refresh();
-		await browser.runtime.sendMessage({ method: "requests.disableReferrerOnError" });
-		await browser.permissions.remove({ permissions: ["webRequest", "webRequestBlocking"] });
 	}
 }
 

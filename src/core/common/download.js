@@ -100,6 +100,7 @@ async function downloadPage(pageData, options) {
 		warnUnsavedPage: options.warnUnsavedPage,
 		createRootDirectory: options.createRootDirectory,
 		selfExtractingArchive: options.selfExtractingArchive,
+		disableCompression: options.disableCompression,
 		embeddedImage: embeddedImage ? Array.from(embeddedImage) : null,
 		preventAppendedData: options.preventAppendedData,
 		extractDataFromPage: options.extractDataFromPage,
@@ -123,7 +124,8 @@ async function downloadPage(pageData, options) {
 		S3SecretKey: options.S3SecretKey,
 		// 沧澜平台相关参数
 		saveToCanglang: options.saveToCanglang,           // 是否保存到沧澜平台
-		canglangDomain: options.canglangDomain,           // 沧澜平台域名
+		canglangFrontendDomain: options.canglangFrontendDomain,  // 沧澜平台前端域名
+		canglangApiDomain: options.canglangApiDomain,     // 沧澜平台 API 域名
 		canglangApiUrl: options.canglangApiUrl,           // 沧澜平台 API 地址
 		// 注意：Token 由后台脚本自动从 browser.storage 读取，无需从这里传递
 		infobarPositionAbsolute: options.infobarPositionAbsolute,
@@ -148,7 +150,9 @@ async function downloadPage(pageData, options) {
 			message.filename = pageData.filename;
 			message.blobURL = blobURL;
 			const result = await browser.runtime.sendMessage(message);
-			URL.revokeObjectURL(blobURL);
+			if (!message.openSavedPage) {
+				URL.revokeObjectURL(blobURL);
+			}
 			if (result.error) {
 				message.embeddedImage = embeddedImage;
 				message.blobURL = null;
@@ -172,8 +176,8 @@ async function downloadPage(pageData, options) {
 				await browser.runtime.sendMessage({ method: "downloads.end", taskId: options.taskId, hash, woleetKey: options.woleetKey });
 			}
 		} else {
-			browser.runtime.sendMessage({ method: "downloads.cancel" });
-			browser.runtime.sendMessage({ method: "ui.processCancelled" });
+			browser.runtime.sendMessage({ method: "downloads.cancel" }).catch(() => { });
+			browser.runtime.sendMessage({ method: "ui.processCancelled" }).catch(() => { });
 		}
 	} else {
 		// 处理非压缩内容的保存逻辑
@@ -188,7 +192,9 @@ async function downloadPage(pageData, options) {
 				const blobURL = URL.createObjectURL(new Blob([pageData.content], { type: pageData.mimeType }));
 				message.blobURL = blobURL;
 				const result = await browser.runtime.sendMessage(message);
-				URL.revokeObjectURL(blobURL);
+				if (!message.openSavedPage) {
+					URL.revokeObjectURL(blobURL);
+				}
 				if (result.error) {
 					message.blobURL = null;
 					for (let blockIndex = 0; blockIndex * MAX_CONTENT_SIZE < pageData.content.length; blockIndex++) {
@@ -203,8 +209,8 @@ async function downloadPage(pageData, options) {
 					}
 				}
 			} else {
-				browser.runtime.sendMessage({ method: "downloads.cancel" });
-				browser.runtime.sendMessage({ method: "ui.processCancelled" });
+				browser.runtime.sendMessage({ method: "downloads.cancel" }).catch(() => { });
+				browser.runtime.sendMessage({ method: "ui.processCancelled" }).catch(() => { });
 			}
 		} else {
 			if (options.saveToClipboard) {
@@ -215,7 +221,7 @@ async function downloadPage(pageData, options) {
 			if (options.openSavedPage) {
 				open(URL.createObjectURL(new Blob([pageData.content], { type: pageData.mimeType })));
 			}
-			browser.runtime.sendMessage({ method: "ui.processEnd" });
+			browser.runtime.sendMessage({ method: "ui.processEnd" }).catch(() => { });
 		}
 		const hash = options.openEditor ? null : pageData.hash;
 		await browser.runtime.sendMessage({ method: "downloads.end", taskId: options.taskId, hash, woleetKey: options.woleetKey });

@@ -21,17 +21,12 @@
  *   Source.
  */
 
-/* global browser, XMLHttpRequest */
+/* global browser, fetch, setTimeout */
 
-const referrers = new Map();
-const REQUEST_ID_HEADER_NAME = "x-single-file-request-id";
 const MAX_CONTENT_SIZE = 8 * (1024 * 1024);
+const REQUEST_WAIT_DELAY = 1000;
 
-export {
-	REQUEST_ID_HEADER_NAME,
-	referrers,
-	fetchResource
-};
+let requestId = 1;
 
 browser.runtime.onMessage.addListener((message, sender) => {
 	if (message.method && message.method.startsWith("singlefile.fetch")) {
@@ -77,47 +72,64 @@ async function sendResponse(tabId, requestId, response) {
 	return {};
 }
 
-function fetchResource(url, options = {}, includeRequestId) {
-	return new Promise((resolve, reject) => {
-		const xhrRequest = new XMLHttpRequest();
-		xhrRequest.withCredentials = true;
-		xhrRequest.responseType = "arraybuffer";
-		xhrRequest.onerror = event => reject(new Error(event.detail));
-		xhrRequest.onreadystatechange = () => {
-			if (xhrRequest.readyState == XMLHttpRequest.DONE) {
-				if (xhrRequest.status || xhrRequest.response.byteLength) {
-					if ((xhrRequest.status == 401 || xhrRequest.status == 403 || xhrRequest.status == 404) && !includeRequestId) {
-						fetchResource(url, options, true)
-							.then(resolve)
-							.catch(reject);
-					} else {
-						resolve({
-							arrayBuffer: xhrRequest.response,
-							array: Array.from(new Uint8Array(xhrRequest.response)),
-							headers: { "content-type": xhrRequest.getResponseHeader("Content-Type") },
-							status: xhrRequest.status
-						});
-					}
-				} else {
-					reject(new Error("Empty response"));
-				}
-			}
-		};
-		xhrRequest.open("GET", url, true);
-		if (options.headers) {
-			for (const entry of Object.entries(options.headers)) {
-				xhrRequest.setRequestHeader(entry[0], entry[1]);
-			}
+async function fetchResource(url, options = {}) {
+	options.cache = "no-store";
+	const response = await fetch(url, options);
+	if (options.referrer && (response.status == 401 || response.status == 403 || response.status == 404)) {
+		const requestId = await enableReferrerOnError(url, options.referrer);
+		await new Promise(resolve => setTimeout(resolve, REQUEST_WAIT_DELAY));
+		try {
+			const response = await fetch(url, options);
+			const array = Array.from(new Uint8Array(await response.arrayBuffer()));
+			const headers = { "content-type": response.headers.get("content-type") };
+			const status = response.status;
+			return {
+				array,
+				headers,
+				status
+			};
+		} finally {
+			await disableReferrerOnError(requestId);
 		}
-		if (includeRequestId) {
-			const randomId = String(Math.random()).substring(2);
-			setReferrer(randomId, options.referrer);
-			xhrRequest.setRequestHeader(REQUEST_ID_HEADER_NAME, randomId);
-		}
-		xhrRequest.send();
-	});
+	}
+
+	const array = Array.from(new Uint8Array(await response.arrayBuffer()));
+	const headers = { "content-type": response.headers.get("content-type") };
+	const status = response.status;
+	return {
+		array,
+		headers,
+		status
+	};
 }
 
-function setReferrer(requestId, referrer) {
-	referrers.set(requestId, referrer);
+async function enableReferrerOnError(url, referrer) {
+	const id = requestId++;
+	await browser.declarativeNetRequest.updateSessionRules({
+		addRules: [{
+			action: {
+				type: "modifyHeaders",
+				requestHeaders: [
+					{
+						header: "Referer",
+						operation: "set",
+						value: referrer
+					}
+				]
+			},
+			condition: {
+				initiatorDomains: [browser.runtime.id],
+				urlFilter: url,
+				resourceTypes: ["xmlhttprequest"]
+			},
+			id
+		}]
+	});
+	return id;
+}
+
+async function disableReferrerOnError(requestId) {
+	await browser.declarativeNetRequest.updateSessionRules({
+		removeRuleIds: [requestId]
+	});
 }

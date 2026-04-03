@@ -41,6 +41,9 @@ let secureLS = null;
 // Toast 容器（延迟初始化）
 let toastContainer = null;
 
+// 定时器 ID（用于清理）
+let syncInterval = null;
+
 /**
  * 创建 Toast 容器
  */
@@ -59,7 +62,11 @@ function createToastContainer() {
 		flex-direction: column;
 		gap: 10px;
 	`;
-	document.body.appendChild(container);
+	if (document.body) {
+		document.body.appendChild(container);
+	} else {
+		document.documentElement.appendChild(container);
+	}
 	toastContainer = container;
 	return container;
 }
@@ -86,11 +93,11 @@ function showToast(message, type = 'info', duration = 3000) {
 			info: { icon: 'ℹ', color: '#3b82f6', bg: '#dbeafe', border: '#93c5fd' }
 		};
 
-		const { icon, color, bg, border } = config[type] || config.info;
+		const { icon, color, bg } = config[type] || config.info;
 
 		toast.style.cssText = `
-			min-width: 300px;
-			max-width: 400px;
+			min-width: 220px;
+			max-width: 280px;
 			padding: 12px 16px;
 			background: ${bg};
 			border-left: 4px solid ${color};
@@ -122,9 +129,10 @@ function showToast(message, type = 'info', duration = 3000) {
 			">${icon}</div>
 			<div style="flex: 1; word-break: break-word;">
 				<strong style="display: block; margin-bottom: 2px; color: ${color};">沧澜 Token 同步</strong>
-				${message}
+				<span class="canglang-toast-message"></span>
 			</div>
 		`;
+		toast.querySelector(".canglang-toast-message").textContent = message;
 
 		// 添加动画样式
 		if (!document.getElementById('canglang-toast-animations')) {
@@ -176,8 +184,26 @@ function showToast(message, type = 'info', duration = 3000) {
  */
 async function initSecureLS() {
 	try {
-		// 直接使用与前端相同的加密密钥（对应 VITE_APP_STORE_SECURE_KEY）
-		const secureKey = '42e25c85028f15cdc5aa4d483ab7d5bf06af82e9723e03373d28c88834352815';
+		// 从扩展配置的默认 profile 中读取加密密钥
+		const DEFAULT_KEY = '42e25c85028f15cdc5aa4d483ab7d5bf06af82e9723e03373d28c88834352815';
+		let secureKey = DEFAULT_KEY;
+
+		try {
+			// 从默认 profile 中读取配置
+			const profileKey = 'profile___Default_Settings__';
+			const configs = await browser.storage.local.get(profileKey);
+			const profile = configs[profileKey];
+
+			if (profile && profile.canglangSecureKey && profile.canglangSecureKey.trim() !== '') {
+				secureKey = profile.canglangSecureKey;
+				console.log("[沧澜插件] 使用配置的加密密钥");
+			} else {
+				console.warn("[沧澜插件] 未配置加密密钥，使用默认密钥");
+				console.warn("[沧澜插件] 建议在扩展设置中配置 canglangSecureKey");
+			}
+		} catch (configError) {
+			console.warn("[沧澜插件] 读取配置失败，使用默认密钥:", configError);
+		}
 
 		// 获取命名空间（从元数据键中提取）
 		let namespace = '沧澜';
@@ -255,8 +281,12 @@ function findCanglangStorageKey() {
 
 /**
  * 从 localStorage 读取 Token 并同步到扩展 storage
+ * @param {number} retryCount - 当前重试次数
  */
-async function syncTokenToExtensionStorage() {
+async function syncTokenToExtensionStorage(retryCount = 0) {
+	const MAX_RETRIES = 3;
+	const RETRY_DELAYS = [1000, 3000, 5000]; // 指数退避延迟（毫秒）
+
 	try {
 		// 1. 查找沧澜平台的 localStorage key
 		const storageKey = findCanglangStorageKey();
@@ -333,6 +363,57 @@ async function syncTokenToExtensionStorage() {
 			return;
 		}
 
+		// 3.5. 检查 Token 是否过期（JWT Token）
+		try {
+			const parts = accessToken.split('.');
+			if (parts.length === 3) {
+				// 解析 JWT payload
+				const payload = JSON.parse(atob(parts[1]));
+
+				console.log("[沧澜插件] JWT Payload 解析成功");
+				console.log("[沧澜插件] Token 前缀:", accessToken.substring(0, 30) + "...");
+
+				if (payload.exp) {
+					const expiresAt = payload.exp * 1000; // JWT exp 是秒，转换为毫秒
+					const now = Date.now();
+
+					console.log("[沧澜插件] Token 过期检查:");
+					console.log("[沧澜插件]   exp (原始):", payload.exp);
+					console.log("[沧澜插件]   expiresAt (毫秒):", expiresAt);
+					console.log("[沧澜插件]   过期时间:", new Date(expiresAt).toISOString());
+					console.log("[沧澜插件]   now (毫秒):", now);
+					console.log("[沧澜插件]   当前时间:", new Date(now).toISOString());
+					console.log("[沧澜插件]   时间差 (秒):", Math.floor((expiresAt - now) / 1000));
+
+					if (expiresAt < now) {
+						console.warn("[沧澜插件] Token 已过期，不同步到扩展");
+						console.warn("[沧澜插件] 过期时间:", new Date(expiresAt).toISOString());
+						console.warn("[沧澜插件] 当前时间:", new Date(now).toISOString());
+						showToast('检测到过期的 Token，请重新登录沧澜平台', 'warning', 5000);
+						// 清除扩展中的过期 Token
+						await browser.storage.local.remove(STORAGE_KEY);
+						lastSyncedToken = null;
+						return;
+					}
+
+					// 如果 Token 将在 5 分钟内过期，发出警告但仍然同步
+					const timeUntilExpiry = expiresAt - now;
+					if (timeUntilExpiry < 5 * 60 * 1000) {
+						console.warn("[沧澜插件] Token 即将过期");
+						console.warn("[沧澜插件] 剩余有效时间:", Math.floor(timeUntilExpiry / 1000), "秒");
+						showToast('Token 即将过期，建议重新登录', 'warning', 4000);
+					} else {
+						console.log("[沧澜插件] Token 有效，剩余时间:", Math.floor(timeUntilExpiry / 1000), "秒");
+					}
+				} else {
+					console.log("[沧澜插件] Token 没有 exp 字段，跳过过期检查");
+				}
+			}
+		} catch (parseError) {
+			// Token 格式错误或不是 JWT，记录警告但继续同步
+			console.warn("[沧澜插件] 无法解析 Token 过期时间（可能不是 JWT 格式）:", parseError);
+		}
+
 		// 4. 检查 Token 是否真的变化了
 		if (lastSyncedToken === accessToken) {
 			// Token 没有变化，跳过同步
@@ -356,12 +437,26 @@ async function syncTokenToExtensionStorage() {
 		console.log("[沧澜插件] Token 前缀:", accessToken.substring(0, 20) + "...");
 		console.log("[沧澜插件] 数据加密:", encrypted ? "是" : "否");
 
-		// 显示成功通知
-		showToast('Token 同步成功！', 'success', 3000);
+		// 显示成功通知（仅首次同步或重试成功后显示）
+		if (retryCount === 0 || retryCount > 0) {
+			showToast('Token 同步成功！', 'success', 3000);
+		}
 
 	} catch (error) {
 		console.error("[沧澜插件] 同步 Token 失败:", error);
-		showToast(`同步失败：${error.message || '未知错误'}`, 'error', 5000);
+
+		// 如果还有重试机会，进行重试
+		if (retryCount < MAX_RETRIES) {
+			const delay = RETRY_DELAYS[retryCount];
+			console.log(`[沧澜插件] 将在 ${delay}ms 后重试 (${retryCount + 1}/${MAX_RETRIES})`);
+
+			setTimeout(() => {
+				syncTokenToExtensionStorage(retryCount + 1);
+			}, delay);
+		} else {
+			// 重试次数用尽，显示错误
+			showToast(`同步失败：${error.message || '未知错误'}`, 'error', 5000);
+		}
 	}
 }
 
@@ -416,11 +511,32 @@ async function init() {
 		}
 	});
 
+	// 清理旧的定时器（如果存在）
+	if (syncInterval) {
+		clearInterval(syncInterval);
+	}
+
 	// 定期检查 Token 是否变化（每 60 秒检查一次，降低频率）
-	setInterval(() => {
+	syncInterval = setInterval(() => {
 		syncTokenToExtensionStorage();
 	}, 60000);
 }
+
+/**
+ * 清理资源
+ */
+function cleanup() {
+	// 清理定时器
+	if (syncInterval) {
+		clearInterval(syncInterval);
+		syncInterval = null;
+		console.log("[沧澜插件] 已清理定时器");
+	}
+}
+
+// 页面卸载时清理资源
+window.addEventListener('beforeunload', cleanup);
+window.addEventListener('unload', cleanup);
 
 // 页面加载完成后初始化
 if (document.readyState === 'loading') {

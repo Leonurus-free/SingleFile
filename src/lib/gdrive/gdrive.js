@@ -182,7 +182,7 @@ class MediaUploader {
 	async upload(indexFilename = 1) {
 		let method = "POST";
 		let fileId;
-		const httpListResponse = getResponse(await fetch(GDRIVE_URL + `?q=name = '${this.metadata.name}' and trashed != true and '${this.metadata.parents[0]}' in parents`, {
+		const httpListResponse = getResponse(await fetch(GDRIVE_URL + `?q=name = '${this.metadata.name.replace(/'/g, "\\'")}' and trashed != true and '${this.metadata.parents[0]}' in parents`, {
 			headers: {
 				"Authorization": "Bearer " + this.token,
 				"Content-Type": "application/json"
@@ -203,7 +203,7 @@ class MediaUploader {
 					extension = this.metadata.name.substring(dotIndex + 1);
 				}
 				const name = nameWithoutExtension + " (" + indexFilename + ")." + extension;
-				const httpResponse = getResponse(await fetch(GDRIVE_URL + `?q=name = '${name}' and trashed != true and '${this.metadata.parents[0]}' in parents`, {
+				const httpResponse = getResponse(await fetch(GDRIVE_URL + `?q=name = '${name.replace(/'/g, "\\'")}' and trashed != true and '${this.metadata.parents[0]}' in parents`, {
 					headers: {
 						"Authorization": "Bearer " + this.token,
 						"Content-Type": "application/json"
@@ -356,7 +356,7 @@ async function getOrCreateFolder(gdrive, folderName, parentFolderId) {
 }
 
 async function getFolder(gdrive, folderName, parentFolderId) {
-	const httpResponse = await fetch(GDRIVE_URL + "?q=mimeType = 'application/vnd.google-apps.folder' and name = '" + folderName + "' and trashed != true and '" + parentFolderId + "' in parents", {
+	const httpResponse = await fetch(GDRIVE_URL + "?q=mimeType = 'application/vnd.google-apps.folder' and name = '" + folderName.replace(/'/g, "\\'") + "' and trashed != true and '" + parentFolderId + "' in parents", {
 		headers: {
 			"Authorization": "Bearer " + gdrive.accessToken
 		}

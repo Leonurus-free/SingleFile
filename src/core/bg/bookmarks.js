@@ -70,13 +70,8 @@ async function enable() {
 }
 
 async function disable() {
-	let disabled;
-	const profiles = await config.getProfiles();
-	Object.keys(profiles).forEach(profileName => disabled = disabled || !profiles[profileName].saveCreatedBookmarks);
-	if (disabled) {
-		browser.bookmarks.onCreated.removeListener(onCreated);
-		browser.bookmarks.onMoved.removeListener(onMoved);
-	}
+	browser.bookmarks.onCreated.removeListener(onCreated);
+	browser.bookmarks.onMoved.removeListener(onMoved);
 }
 
 async function update(id, changes) {

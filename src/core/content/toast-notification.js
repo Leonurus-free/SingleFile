@@ -64,8 +64,8 @@ function showToast(message, type = 'info', duration = 3000) {
 		const { icon, color, bg } = config[type] || config.info;
 
 		toast.style.cssText = `
-			min-width: 300px;
-			max-width: 400px;
+			min-width: 220px;
+			max-width: 280px;
 			padding: 12px 16px;
 			background: ${bg};
 			border-left: 4px solid ${color};
@@ -97,9 +97,10 @@ function showToast(message, type = 'info', duration = 3000) {
 			">${icon}</div>
 			<div style="flex: 1; word-break: break-word;">
 				<strong style="display: block; margin-bottom: 2px; color: ${color};">沧澜插件</strong>
-				${message}
+				<span class="singlefile-toast-message"></span>
 			</div>
 		`;
+		toast.querySelector(".singlefile-toast-message").textContent = message;
 
 		// 添加动画样式
 		if (!document.getElementById('singlefile-toast-animations')) {

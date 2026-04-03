@@ -21,7 +21,7 @@
  *   Source.
  */
 
-/* global browser, navigator, URL, Blob, File */
+/* global browser, navigator, Blob, File, btoa */
 
 import { download } from "./download-util.js";
 import * as tabsData from "./tabs-data.js";
@@ -32,20 +32,7 @@ const DISABLED_PROFILE_NAME = "__Disabled_Settings__";
 const REGEXP_RULE_PREFIX = "regexp:";
 const PROFILE_NAME_PREFIX = "profile_";
 
-const IS_NOT_SAFARI = !/Safari/.test(navigator.userAgent) || /Chrome/.test(navigator.userAgent) || /Vivaldi/.test(navigator.userAgent) || /OPR/.test(navigator.userAgent);
-const IS_MOBILE_FIREFOX = /Mobile.*Firefox/.test(navigator.userAgent);
-const BACKGROUND_SAVE_SUPPORTED = !(IS_MOBILE_FIREFOX || /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent) && !/Vivaldi/.test(navigator.userAgent) && !/OPR/.test(navigator.userAgent));
-const AUTOCLOSE_SUPPORTED = !IS_MOBILE_FIREFOX;
-const BADGE_COLOR_SUPPORTED = IS_NOT_SAFARI;
-const AUTO_SAVE_SUPPORTED = IS_NOT_SAFARI;
-const SELECTABLE_TABS_SUPPORTED = IS_NOT_SAFARI;
-const AUTO_OPEN_EDITOR_SUPPORTED = IS_NOT_SAFARI;
-const INFOBAR_SUPPORTED = IS_NOT_SAFARI;
-const BOOKMARKS_API_SUPPORTED = IS_NOT_SAFARI;
-const IDENTITY_API_SUPPORTED = IS_NOT_SAFARI;
-const CLIPBOARD_API_SUPPORTED = IS_NOT_SAFARI;
-const NATIVE_API_API_SUPPORTED = IS_NOT_SAFARI;
-const WEB_BLOCKING_API_SUPPORTED = IS_NOT_SAFARI;
+const BACKGROUND_SAVE_SUPPORTED = !(/Mobile.*Firefox/.test(navigator.userAgent));
 const SHARE_API_SUPPORTED = navigator.canShare && navigator.canShare({ files: [new File([new Blob([""], { type: "text/html" })], "test.html")] });
 const LEGACY_FILENAME_REPLACED_CHARACTERS = ["~", "+", "\\\\", "?", "%", "*", ":", "|", "\"", "<", ">", "\u0000-\u001f", "\u007f"];
 const DEFAULT_FILENAME_REPLACED_CHARACTERS = ["~", "+", "?", "%", "*", ":", "|", "\"", "<", ">", "\\\\", "\x00-\x1f", "\x7F"];
@@ -68,7 +55,7 @@ const DEFAULT_CONFIG = {
 	loadDeferredImagesBeforeFrames: false,
 	filenameTemplate: "%if-empty<{page-title}|No title> ({date-locale} {time-locale}).{filename-extension}",
 	infobarTemplate: "",
-	includeInfobar: !IS_NOT_SAFARI,
+	includeInfobar: false,
 	openInfobar: false,
 	confirmInfobarContent: false,
 	autoClose: false,
@@ -145,8 +132,9 @@ const DEFAULT_CONFIG = {
 	displayInfobarInEditor: false,
 	compressContent: false,
 	createRootDirectory: false,
-	selfExtractingArchive: true,
-	extractDataFromPage: true,
+	selfExtractingArchive: false,
+	disableCompression: false,
+	extractDataFromPage: false,
 	preventAppendedData: false,
 	insertEmbeddedImage: false,
 	insertEmbeddedScreenshotImage: false,
@@ -203,12 +191,15 @@ const DEFAULT_CONFIG = {
 	imageReductionFactor: 1,
 	// 沧澜平台配置项
 	saveToCanglang: true,  // 是否保存到沧澜平台
-	canglangDomain: "http://192.168.100.100:18101",  // 沧澜平台域名（用于 Token 同步和错误提示）
-	canglangApiUrl: "http://192.168.100.100:18101/api/v1/dynamic-monitor/article/archives"  // 沧澜平台 API 地址
+	canglangFrontendDomain: "http://192.168.100.100:15666",  // 沧澜平台前端域名（用于 Token 同步）
+	canglangApiDomain: "http://192.168.100.100:18101",  // 沧澜平台 API 域名（用于数据上传）
+	canglangApiUrl: "http://192.168.100.100:18101/api/v1/dynamic-monitor/article/archives",  // 沧澜平台 API 完整地址
+	canglangSecureKey: "42e25c85028f15cdc5aa4d483ab7d5bf06af82e9723e03373d28c88834352815"  // 沧澜平台 localStorage 加密密钥（对应后端 VITE_APP_STORE_SECURE_KEY）
 	// 注意：
 	// 1. Token 会自动从沧澜平台页面同步到扩展 storage，无需手动配置
 	// 2. 用户只需访问沧澜平台并登录一次，扩展会自动监测并同步 Token
-	// 3. 如果更改 canglangDomain，需要同步修改 manifest.json 中的 content_scripts matches 配置
+	// 3. 如果更改 canglangFrontendDomain，需要同步修改 manifest.json 中的 content_scripts matches 配置
+	// 4. canglangSecureKey 用于解密沧澜平台 localStorage 中的加密 Token，必须与后端配置一致
 };
 
 const DEFAULT_RULES = [{
@@ -252,17 +243,6 @@ export {
 	DISABLED_PROFILE_NAME,
 	CURRENT_PROFILE_NAME,
 	BACKGROUND_SAVE_SUPPORTED,
-	AUTOCLOSE_SUPPORTED,
-	BADGE_COLOR_SUPPORTED,
-	AUTO_SAVE_SUPPORTED,
-	SELECTABLE_TABS_SUPPORTED,
-	AUTO_OPEN_EDITOR_SUPPORTED,
-	INFOBAR_SUPPORTED,
-	BOOKMARKS_API_SUPPORTED,
-	IDENTITY_API_SUPPORTED,
-	CLIPBOARD_API_SUPPORTED,
-	NATIVE_API_API_SUPPORTED,
-	WEB_BLOCKING_API_SUPPORTED,
 	SHARE_API_SUPPORTED,
 	getConfig as get,
 	getRule,
@@ -309,7 +289,7 @@ async function upgrade() {
 		await configStorage.set({ processInForeground: false });
 	}
 	const profileNames = await getProfileNames();
-	profileNames.map(async profileName => {
+	await Promise.all(profileNames.map(async profileName => {
 		const profile = await getProfile(profileName);
 		if (!profile._migratedTemplateFormat) {
 			profile.filenameTemplate = updateFilenameTemplate(profile.filenameTemplate);
@@ -325,7 +305,7 @@ async function upgrade() {
 			profile.filenameReplacedCharacters = DEFAULT_FILENAME_REPLACED_CHARACTERS;
 		}
 		await setProfile(profileName, profile);
-	});
+	}));
 }
 
 function updateFilenameTemplate(template) {
@@ -334,11 +314,11 @@ function updateFilenameTemplate(template) {
 			const value = MIGRATION_DEFAULT_VARIABLES_VALUES[variable];
 			template = template.replaceAll(`{${variable}}`, `%if-empty<{${variable}}|${value}>`);
 		});
-		return template;
 		// eslint-disable-next-line no-unused-vars
 	} catch (error) {
 		// ignored
 	}
+	return template;
 }
 
 async function getRule(url, ignoreWildcard) {
@@ -422,17 +402,6 @@ async function onMessage(message) {
 			DEFAULT_PROFILE_NAME,
 			CURRENT_PROFILE_NAME,
 			BACKGROUND_SAVE_SUPPORTED,
-			AUTOCLOSE_SUPPORTED,
-			BADGE_COLOR_SUPPORTED,
-			AUTO_SAVE_SUPPORTED,
-			SELECTABLE_TABS_SUPPORTED,
-			AUTO_OPEN_EDITOR_SUPPORTED,
-			INFOBAR_SUPPORTED,
-			BOOKMARKS_API_SUPPORTED,
-			IDENTITY_API_SUPPORTED,
-			CLIPBOARD_API_SUPPORTED,
-			NATIVE_API_API_SUPPORTED,
-			WEB_BLOCKING_API_SUPPORTED,
 			SHARE_API_SUPPORTED
 		};
 	}
@@ -575,7 +544,7 @@ async function deleteProfile(profileName) {
 			rule.autoSaveProfile = DEFAULT_PROFILE_NAME;
 		}
 	});
-	configStorage.remove([PROFILE_NAME_PREFIX + profileName]);
+	await configStorage.remove([PROFILE_NAME_PREFIX + profileName]);
 	await configStorage.set({ rules });
 }
 
@@ -666,18 +635,18 @@ async function setDropboxAuthInfo(authInfo) {
 }
 
 async function removeAuthInfo() {
-	let authInfo = getAuthInfo();
+	let authInfo = await getAuthInfo();
 	if (authInfo.revokableAccessToken) {
-		setAuthInfo({ revokableAccessToken: authInfo.revokableAccessToken });
+		await setAuthInfo({ revokableAccessToken: authInfo.revokableAccessToken });
 	} else {
 		await configStorage.remove(["authInfo"]);
 	}
 }
 
 async function removeDropboxAuthInfo() {
-	let authInfo = getDropboxAuthInfo();
+	let authInfo = await getDropboxAuthInfo();
 	if (authInfo.revokableAccessToken) {
-		setDropboxAuthInfo({ revokableAccessToken: authInfo.revokableAccessToken });
+		await setDropboxAuthInfo({ revokableAccessToken: authInfo.revokableAccessToken });
 	} else {
 		await configStorage.remove(["dropboxAuthInfo"]);
 	}
@@ -705,24 +674,13 @@ async function exportConfig() {
 	const config = await getConfig();
 	const textContent = JSON.stringify({ profiles: config.profiles, rules: config.rules, maxParallelWorkers: config.maxParallelWorkers, processInForeground: config.processInForeground }, null, 2);
 	const filename = `singlefile-settings-${(new Date()).toISOString().replace(/:/g, "_")}.json`;
-	if (BACKGROUND_SAVE_SUPPORTED) {
-		const url = URL.createObjectURL(new Blob([textContent], { type: "text/json" }));
-		try {
-			await download({
-				url,
-				filename,
-				saveAs: true
-			}, "_");
-		} finally {
-			URL.revokeObjectURL(url);
-		}
-		return {};
-	} else {
-		return {
-			filename,
-			textContent
-		};
-	}
+	const url = "data:text/json;base64," + btoa(unescape(encodeURIComponent(textContent)));
+	const downloadInfo = {
+		url,
+		filename,
+		saveAs: true
+	};
+	await download(downloadInfo, "_");
 }
 
 async function importConfig(config) {

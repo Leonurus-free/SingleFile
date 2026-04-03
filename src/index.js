@@ -21,18 +21,12 @@
  *   Source.
  */
 
-import * as scripts from "./lib/single-file/core/bg/scripts.js";
 import { fetch, frameFetch } from "./lib/single-file/fetch/content/content-fetch.js";
 
-export {
-	injectScript,
-	getPageData
+const core = {
+	getPageData: globalThis.singlefile.getPageData
 };
 
-function injectScript(tabId, options) {
-	return scripts.inject(tabId, options);
-}
-
-function getPageData(options, initOptions = { fetch, frameFetch }, doc, win) {
-	return globalThis.singlefile.getPageData(options, initOptions, doc, win);
-}
+globalThis.singlefile.getPageData = function (options, initOptions = { fetch, frameFetch }, doc, win) {
+	return core.getPageData(options, initOptions, doc, win);
+};

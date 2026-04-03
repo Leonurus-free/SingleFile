@@ -24,8 +24,8 @@
 ```json
 {
   "matches": [
-    "http://192.168.100.123:15666/*",
-    "https://192.168.100.123:15666/*"
+    "http://192.168.100.100:15666/*",
+    "https://192.168.100.100:15666/*"
   ],
   "run_at": "document_idle",
   "js": [
@@ -37,7 +37,7 @@
 ```
 
 **功能说明：**
-- 当用户访问沧澜平台（`http://192.168.100.123:15666/*`）时，自动注入 Token 同步脚本
+- 当用户访问沧澜平台（`http://192.168.100.100:15666/*`）时，自动注入 Token 同步脚本
 - 脚本会监听 localStorage 变化，自动将 Token 同步到扩展 storage
 - ⚠️ **重要：** 如果沧澜平台的域名或端口发生变化，需要同步修改此配置
 
@@ -114,8 +114,8 @@ localStorage (加密) → SecureLS 解密 → 解压缩 → JSON 解析 → 提�
 ```javascript
 // 沧澜平台配置项
 saveToCanglang: true,  // 是否保存到沧澜平台（默认启用）
-canglangDomain: "http://192.168.100.123:18080",  // 沧澜平台域名（用于 Token 同步和错误提示）
-canglangApiUrl: "http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives",  // 沧澜平台 API 地址
+canglangDomain: "http://192.168.100.100:18080",  // 沧澜平台域名（用于 Token 同步和错误提示）
+canglangApiUrl: "http://192.168.100.100:18080/api/v1/dynamic-monitor/article/archives",  // 沧澜平台 API 地址
 canglangSecureKey: "please-replace-me-with-your-own-key"  // 沧澜平台 localStorage 加密密钥（对应后端 VITE_APP_STORE_SECURE_KEY）
 // 注意：
 // 1. Token 会自动从沧澜平台页面同步到扩展 storage，无需手动配置
@@ -329,7 +329,7 @@ Token 同步到扩展 browser.storage.local
 
 ### 接口地址
 ```
-POST http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives
+POST http://192.168.100.100:18080/api/v1/dynamic-monitor/article/archives
 ```
 
 **注意：** API URL 已更新为 `/article/archives`（不是 `/archives`）
@@ -397,7 +397,7 @@ POST http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives
 
 **重要：** 在使用 沧澜 保存到沧澜平台之前，必须先登录沧澜平台：
 
-1. 访问沧澜平台网站：`http://192.168.100.123:15666`
+1. 访问沧澜平台网站：`http://192.168.100.100:15666`
 2. 输入用户名和密码登录
 3. Token 同步脚本会自动运行，将 Token 同步到扩展 storage
 
@@ -424,7 +424,7 @@ POST http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives
 
 **默认配置：**
 - `saveToCanglang`: `true`（默认启用）
-- `canglangApiUrl`: `http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives`
+- `canglangApiUrl`: `http://192.168.100.100:18080/api/v1/dynamic-monitor/article/archives`
 
 ### 步骤 3：在任意网页保存
 
@@ -550,8 +550,8 @@ POST http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives
 ```javascript
 {
   "saveToCanglang": true,  // 启用沧澜平台保存（默认启用）
-  "canglangDomain": "http://192.168.100.123:18080",  // 沧澜平台域名
-  "canglangApiUrl": "http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives"  // API 地址
+  "canglangDomain": "http://192.168.100.100:18080",  // 沧澜平台域名
+  "canglangApiUrl": "http://192.168.100.100:18080/api/v1/dynamic-monitor/article/archives"  // API 地址
 }
 ```
 
@@ -559,8 +559,8 @@ POST http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives
 ```json
 {
   "matches": [
-    "http://192.168.100.123:15666/*",
-    "https://192.168.100.123:15666/*"
+    "http://192.168.100.100:15666/*",
+    "https://192.168.100.100:15666/*"
   ],
   "run_at": "document_idle",
   "js": [
@@ -659,11 +659,11 @@ POST http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives
 
 1. **必须先登录沧澜平台**
    - 在使用 沧澜 保存到沧澜平台之前
-   - 必须至少访问一次沧澜平台网站（`http://192.168.100.123:15666`）并登录
+   - 必须至少访问一次沧澜平台网站（`http://192.168.100.100:15666`）并登录
    - Token 会自动同步到扩展 storage
 
 2. **Token 同步脚本**
-   - 只在沧澜平台页面（`http://192.168.100.123:15666/*`）自动运行
+   - 只在沧澜平台页面（`http://192.168.100.100:15666/*`）自动运行
    - 负责将 localStorage 中的 Token 同步到扩展 storage
    - 首次登录后需要等待脚本运行（通常几秒内完成）
 
@@ -683,8 +683,8 @@ POST http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives
    - ✅ **无需同源**：不再受 localStorage 同源策略限制
 
 6. **域名和端口配置**
-   - 沧澜平台前端：`http://192.168.100.123:15666`（Token 同步脚本注入）
-   - 沧澜平台 API：`http://192.168.100.123:18080`（数据上传）
+   - 沧澜平台前端：`http://192.168.100.100:15666`（Token 同步脚本注入）
+   - 沧澜平台 API：`http://192.168.100.100:18080`（数据上传）
    - 注意：前端和 API 使用不同的端口
 
 7. **manifest.json 配置**
@@ -693,7 +693,7 @@ POST http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives
 
 8. **API 地址**
    - 确保沧澜平台 API 可访问（内网地址需要在同一网络）
-   - 默认地址：`http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives`
+   - 默认地址：`http://192.168.100.100:18080/api/v1/dynamic-monitor/article/archives`
    - 注意：API URL 已更新为 `/article/archives`（不是 `/archives`）
 
 9. **CORS 配置**
@@ -768,7 +768,7 @@ Token 同步脚本的打包配置已添加到 `rollup.config.js`：
 
 ### 1. 检查 Token 是否同步到扩展 storage
 
-在沧澜平台页面（`http://192.168.100.123:15666`）的浏览器控制台执行：
+在沧澜平台页面（`http://192.168.100.100:15666`）的浏览器控制台执行：
 
 ```javascript
 // 检查沧澜平台 localStorage
@@ -793,7 +793,7 @@ browser.storage.local.get('canglangAuthToken').then(result => {
 **明文 Token（开发环境）：**
 ```
 [沧澜插件] 沧澜平台 Token 同步脚本已启动
-[沧澜插件] 当前页面: http://192.168.100.123:15666/...
+[沧澜插件] 当前页面: http://192.168.100.100:15666/...
 [沧澜插件] 数据加密状态: 明文
 [沧澜插件] 成功同步沧澜平台 Token 到扩展 storage
 [沧澜插件] Token 前缀: eyJhbGciOiJIUzI1NiI...
@@ -803,7 +803,7 @@ browser.storage.local.get('canglangAuthToken').then(result => {
 **加密 Token（生产环境）：**
 ```
 [沧澜插件] 沧澜平台 Token 同步脚本已启动
-[沧澜插件] 当前页面: http://192.168.100.123:15666/...
+[沧澜插件] 当前页面: http://192.168.100.100:15666/...
 [沧澜插件] 数据加密状态: 已加密
 [沧澜插件] SecureLS 初始化成功，命名空间: 沧澜-1.0.0-prod
 [沧澜插件] 成功解密 Token 数据
@@ -837,7 +837,7 @@ browser.storage.local.get('canglangAuthToken').then(result => {
 
 在浏览器开发者工具的 Network 标签中：
 
-1. 找到发送到 `http://192.168.100.123:18080/api/v1/dynamic-monitor/article/archives` 的请求
+1. 找到发送到 `http://192.168.100.100:18080/api/v1/dynamic-monitor/article/archives` 的请求
 2. 检查 Request Headers 中的 `Authorization: Bearer ...`
 3. 检查 Request Payload 中的数据结构（应该是扁平 JSON）
 
@@ -855,6 +855,13 @@ browser.storage.local.get('canglangAuthToken').then(result => {
 ---
 
 ## 版本历史
+
+### v4.0.0 (2026-04-01) - Chrome 127+ (MV3) 全面兼容
+- 🎉 **重磅架构升级**：支持最新的 Chrome 127+ (Manifest V3)
+- ✅ 引入 **Offscreen Document（离屏文档）** 架构解决 Service Worker DOM 权限限制
+- ✅ 实现剪贴板操作 (`saveToClipboard`) 的离屏转发，确保 MV3 下功能完整
+- ✅ 同步集成沧澜平台 Token 同步机制到 MV3 环境
+- ✅ 新增多环境构建目标：`singlefile-extension-chrome-127+.zip`
 
 ### v3.0.0 (2025-12-17) - 跨域 Token 同步架构
 - 🎉 **重大架构变更**：实现跨域 Token 同步机制

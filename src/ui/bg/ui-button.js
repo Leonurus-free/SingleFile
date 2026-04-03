@@ -23,7 +23,6 @@
 
 /* global browser */
 
-import * as config from "./../../core/bg/config.js";
 import { queryTabs } from "./../../core/bg/tabs-util.js";
 import * as tabsData from "./../../core/bg/tabs-data.js";
 import { autoSaveIsEnabled } from "../../core/bg/autosave-util.js";
@@ -112,12 +111,16 @@ const BUTTON_STATES = {
 
 let business;
 
-browser.browserAction.onClicked.addListener(async tab => {
+browser.action.onClicked.addListener(async tab => {
 	const highlightedTabs = await queryTabs({ currentWindow: true, highlighted: true });
-	if (highlightedTabs.length <= 1) {
+	const sameWorkspaceTabs = highlightedTabs.filter(highlightedTab =>
+		highlightedTab.windowId === tab.windowId &&
+		(tab.workspaceId === undefined || highlightedTab.workspaceId === tab.workspaceId)
+	);
+	if (sameWorkspaceTabs.length <= 1) {
 		toggleSaveTab(tab);
 	} else {
-		business.saveTabs(highlightedTabs);
+		business.saveTabs(sameWorkspaceTabs);
 	}
 
 	function toggleSaveTab(tab) {
@@ -260,11 +263,10 @@ async function refreshAsync(tabId, state) {
 }
 
 async function refreshProperty(tabId, browserActionMethod, browserActionParameter) {
-	const actionMethodSupported = browserActionMethod != "setBadgeBackgroundColor" || config.BADGE_COLOR_SUPPORTED;
-	if (browser.browserAction[browserActionMethod] && actionMethodSupported) {
+	if (browser.action[browserActionMethod]) {
 		const parameter = JSON.parse(JSON.stringify(browserActionParameter));
 		parameter.tabId = tabId;
-		await browser.browserAction[browserActionMethod](parameter);
+		await browser.action[browserActionMethod](parameter);
 	}
 }
 

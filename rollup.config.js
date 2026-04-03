@@ -104,7 +104,7 @@ export default [{
 	input: ["src/index.js"],
 	output: [{
 		file: "lib/single-file-extension-core.js",
-		format: "umd",
+		format: "iife",
 		name: "extension",
 		plugins: [terser()]
 	}]
@@ -149,16 +149,16 @@ export default [{
 		plugins: [terser()]
 	}]
 }, {
-	input: ["src/lib/single-file/background.js"],
+	input: ["src/core/bg/offscreen-document.js"],
 	output: [{
-		file: "lib/single-file-background.js",
+		file: "lib/single-file-extension-offscreen-document.js",
 		format: "iife",
 		plugins: [terser()]
 	}]
 }, {
-	input: ["src/lib/web-stream/index.js"],
+	input: ["src/lib/single-file/background.js"],
 	output: [{
-		file: "lib/web-stream.js",
+		file: "lib/single-file-background.js",
 		format: "iife",
 		plugins: [terser()]
 	}]

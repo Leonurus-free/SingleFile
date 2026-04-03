@@ -99,7 +99,7 @@ export default [{
 	input: ["src/index.js"],
 	output: [{
 		file: "lib/single-file-extension-core.js",
-		format: "umd",
+		format: "iife",
 		name: "extension",
 		plugins: []
 	}]
@@ -144,6 +144,13 @@ export default [{
 		plugins: []
 	}]
 }, {
+	input: ["src/core/bg/offscreen-document.js"],
+	output: [{
+		file: "lib/single-file-extension-offscreen-document.js",
+		format: "iife",
+		plugins: []
+	}]
+}, {
 	input: ["src/lib/single-file/background.js"],
 	output: [{
 		file: "lib/single-file-background.js",
@@ -151,9 +158,16 @@ export default [{
 		plugins: []
 	}]
 }, {
-	input: ["src/lib/web-stream/index.js"],
+	input: ["src/core/content/canglang-token-sync.js"],
 	output: [{
-		file: "lib/web-stream.js",
+		file: "lib/canglang-token-sync.js",
+		format: "iife",
+		plugins: []
+	}]
+}, {
+	input: ["src/core/content/toast-notification.js"],
+	output: [{
+		file: "lib/toast-notification.js",
 		format: "iife",
 		plugins: []
 	}]

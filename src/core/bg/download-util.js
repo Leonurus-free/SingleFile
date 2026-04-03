@@ -39,10 +39,20 @@ export {
 
 async function download(downloadInfo, replacementCharacter) {
 	let downloadId;
+	let processPendingEvents;
+	const pendingEvents = [];
 	const result = new Promise((resolve, reject) => {
 		browser.downloads.onChanged.addListener(onChanged);
 
 		function onChanged(event) {
+			if (downloadId === undefined) {
+				pendingEvents.push(event);
+				return;
+			}
+			processEvent(event);
+		}
+
+		function processEvent(event) {
 			if (event.id == downloadId && event.state) {
 				if (event.state.current == STATE_DOWNLOAD_COMPLETE) {
 					browser.downloads.search({ id: downloadId })
@@ -60,9 +70,12 @@ async function download(downloadInfo, replacementCharacter) {
 				}
 			}
 		}
+
+		processPendingEvents = () => pendingEvents.forEach(processEvent);
 	});
 	try {
 		downloadId = await browser.downloads.download(downloadInfo);
+		processPendingEvents();
 	} catch (error) {
 		if (error.message) {
 			const errorMessage = error.message.toLowerCase();

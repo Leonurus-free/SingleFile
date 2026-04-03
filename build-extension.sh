@@ -21,7 +21,7 @@ fi
 npm install
 npm update
 
-npx rollup -c rollup.config.js
+./build.sh
 
 cp package.json package.copy.json
 jq 'del(.dependencies."single-file-cli")' package.copy.json > package.json

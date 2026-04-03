@@ -1,0 +1,13 @@
+diff --git a/node_modules/single-file-core/core/helper.js b/node_modules/single-file-core/core/helper.js
+index b91e674..cfd5c13 100644
+--- a/node_modules/single-file-core/core/helper.js
++++ b/node_modules/single-file-core/core/helper.js
+@@ -262,7 +262,7 @@ function preProcessDoc(doc, win, options) {
+ 
+ function markInvalidNesting(doc) {
+ 	addTrackIds(doc.body);
+-	const verificationDoc = parseDocContent(serialize(doc));
++	const verificationDoc = parseDocContent(serialize(doc), doc.baseURI);
+ 	const markedMap = buildTrackIdMap(doc.body);
+ 	const normalizedMap = buildTrackIdMap(verificationDoc.body);
+ 	const trackIds = new Set();

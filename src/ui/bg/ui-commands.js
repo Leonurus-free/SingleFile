@@ -27,7 +27,6 @@ import { queryTabs } from "./../../core/bg/tabs-util.js";
 import * as config from "./../../core/bg/config.js";
 
 const commands = browser.commands;
-const BROWSER_COMMANDS_API_SUPPORTED = commands && commands.onCommand && commands.onCommand.addListener;
 
 let business;
 
@@ -39,28 +38,26 @@ function init(businessApi) {
 	business = businessApi;
 }
 
-if (BROWSER_COMMANDS_API_SUPPORTED) {
-	commands.onCommand.addListener(async command => {
-		if (command == "save-selected-tabs") {
-			const highlightedTabs = await queryTabs({ currentWindow: true, highlighted: true });
-			business.saveTabs(highlightedTabs, { optionallySelected: true });
-		} else if (command == "save-all-tabs") {
-			const tabs = await queryTabs({ currentWindow: true });
-			business.saveTabs(tabs);
-		} else if (command.startsWith("custom-command-")) {
-			const profiles = await config.getProfiles();
-			let selectedProfile;
-			Object.keys(profiles).some(profile => {
-				if (profiles[profile].customShortcut == command) {
-					selectedProfile = profile;
-					return true;
-				}
-				return false;
-			});
-			if (selectedProfile) {
-				const highlightedTabs = await queryTabs({ currentWindow: true, highlighted: true });
-				business.saveTabs(highlightedTabs, profiles[selectedProfile]);
+commands.onCommand.addListener(async command => {
+	if (command == "save-selected-tabs") {
+		const highlightedTabs = await queryTabs({ currentWindow: true, highlighted: true });
+		business.saveTabs(highlightedTabs, { optionallySelected: true });
+	} else if (command == "save-all-tabs") {
+		const tabs = await queryTabs({ currentWindow: true });
+		business.saveTabs(tabs);
+	} else if (command.startsWith("custom-command-")) {
+		const profiles = await config.getProfiles();
+		let selectedProfile;
+		Object.keys(profiles).some(profile => {
+			if (profiles[profile].customShortcut == command) {
+				selectedProfile = profile;
+				return true;
 			}
+			return false;
+		});
+		if (selectedProfile) {
+			const highlightedTabs = await queryTabs({ currentWindow: true, highlighted: true });
+			business.saveTabs(highlightedTabs, profiles[selectedProfile]);
 		}
-	});
-}
+	}
+});

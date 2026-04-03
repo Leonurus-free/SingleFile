@@ -21,7 +21,7 @@
  *   Source.
  */
 
-/* global browser, document, matchMedia, addEventListener, navigator, prompt, URL, MouseEvent, Blob, setInterval, DOMParser, fetch, TextDecoder, singlefile */
+/* global browser, document, matchMedia, addEventListener, prompt, URL, MouseEvent, Blob, webkitRequestFileSystem, TEMPORARY, DOMParser, fetch, setTimeout, TextDecoder, singlefile */
 
 import * as download from "../../core/common/download.js";
 import { onError } from "./../common/common-content-ui.js";
@@ -33,7 +33,7 @@ const SHARE_PAGE_BUTTON_MESSAGE = browser.i18n.getMessage("topPanelSharePageButt
 const SHARE_SELECTION_BUTTON_MESSAGE = browser.i18n.getMessage("topPanelShareSelectionButton");
 const ERROR_TITLE_MESSAGE = browser.i18n.getMessage("topPanelError");
 
-const FOREGROUND_SAVE = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent) && !/Vivaldi/.test(navigator.userAgent) && !/OPR/.test(navigator.userAgent);
+const FS_SIZE = 100 * 1024 * 1024;
 const SHADOWROOT_ATTRIBUTE_NAME = "shadowrootmode";
 const INFOBAR_TAGNAME = "single-file-infobar";
 
@@ -63,7 +63,7 @@ const printPageButton = document.querySelector(".print-page-button");
 const importMhtButton = document.querySelector(".import-mht-button");
 const lastButton = toolbarElement.querySelector(".buttons:last-of-type [type=button]:last-of-type");
 
-let tabData, tabDataContents = [], downloadParser;
+let tabData, tabDataContents = [], downloadParser, scrollY, transform, overflow;
 
 addYellowNoteButton.title = browser.i18n.getMessage("editorAddYellowNote");
 addPinkNoteButton.title = browser.i18n.getMessage("editorAddPinkNote");
@@ -295,9 +295,16 @@ function toolbarOnTouchEnd(event) {
 	toolbarMoving = false;
 }
 
+let updatedResources = {};
+
 addEventListener("resize", viewportSizeChange);
 addEventListener("message", async event => {
-	const message = JSON.parse(event.data);
+	let message;
+	try {
+		message = JSON.parse(event.data);
+	} catch (e) {
+		return;
+	}
 	if (message.method == "setContent") {
 		tabData.options.openEditor = false;
 		tabData.options.openSavedPage = false;
@@ -305,6 +312,9 @@ addEventListener("message", async event => {
 			tabData.options.compressContent = true;
 			if (tabData.selfExtractingArchive !== undefined) {
 				tabData.options.selfExtractingArchive = tabData.selfExtractingArchive;
+			}
+			if (tabData.disableCompression !== undefined) {
+				tabData.options.disableCompression = tabData.disableCompression;
 			}
 			if (tabData.extractDataFromPageTags !== undefined) {
 				tabData.options.extractDataFromPage = tabData.extractDataFromPageTags;
@@ -425,11 +435,15 @@ addEventListener("message", async event => {
 });
 
 browser.runtime.onMessage.addListener(message => {
-	if (message.method == "content.save" ||
+	if (message.method == "devtools.resourceCommitted" ||
+		message.method == "content.save" ||
 		message.method == "editor.setTabData" ||
 		message.method == "options.refresh" ||
 		message.method == "content.error" ||
-		message.method == "content.download") {
+		message.method == "content.download" ||
+		message.method == "content.beginScrollTo" ||
+		message.method == "content.scrollTo" ||
+		message.method == "content.endScrollTo") {
 		return onMessage(message);
 	}
 });
@@ -446,6 +460,10 @@ addEventListener("beforeunload", event => {
 });
 
 async function onMessage(message) {
+	if (message.method == "devtools.resourceCommitted") {
+		updatedResources[message.url] = { content: message.content, type: message.type, encoding: message.encoding };
+		return {};
+	}
 	if (message.method == "content.save") {
 		tabData.options = message.options;
 		savePage();
@@ -459,18 +477,21 @@ async function onMessage(message) {
 			tabDataContents = [message.content];
 		}
 		if (!message.truncated || message.finished) {
-			tabData = JSON.parse(tabDataContents.join(""));
-			tabData.options = message.options;
-			tabDataContents = [];
-			editorElement.contentWindow.postMessage(JSON.stringify({
-				method: "init",
-				content: tabData.content,
-				password: tabData.options.password,
-				compressContent: message.compressContent,
-				url: tabData.url
-			}), "*");
-			editorElement.contentWindow.focus();
-			setInterval(() => browser.runtime.sendMessage({ method: "ping" }), 15000);
+			if (message.content) {
+				tabData = JSON.parse(tabDataContents.join(""));
+				tabData.tabId = message.tabId;
+				tabData.options = message.options;
+				tabDataContents = [];
+				editorElement.contentWindow.postMessage(JSON.stringify({ method: "init", content: tabData.content, password: tabData.options.password, compressContent: message.compressContent }), "*");
+				editorElement.contentWindow.focus();
+				saveTabData();
+			} else {
+				tabData = { tabId: message.tabId };
+				loadTabData().then(() => {
+					editorElement.contentWindow.postMessage(JSON.stringify({ method: "init", content: tabData.content }), "*");
+					editorElement.contentWindow.focus();
+				});
+			}
 		}
 		return {};
 	}
@@ -484,6 +505,26 @@ async function onMessage(message) {
 	}
 	if (message.method == "content.download") {
 		await downloadContent(message);
+		return {};
+	}
+	if (message.method == "content.beginScrollTo") {
+		scrollY = globalThis.scrollY;
+		transform = document.documentElement.style.getPropertyValue("transform");
+		overflow = document.documentElement.style.getPropertyValue("overflow");
+		globalThis.scrollTo(0, 0);
+		document.documentElement.style.setProperty("transform", "translateY(0px)");
+		document.documentElement.style.setProperty("overflow", "hidden");
+		return {};
+	}
+	if (message.method == "content.scrollTo") {
+		document.documentElement.style.setProperty("transform", "translateY(-" + message.y + "px)");
+		await new Promise(resolve => setTimeout(resolve, 500));
+		return {};
+	}
+	if (message.method == "content.endScrollTo") {
+		globalThis.scrollTo(0, scrollY);
+		document.documentElement.style.setProperty("transform", transform);
+		document.documentElement.style.setProperty("overflow", overflow);
 		return {};
 	}
 }
@@ -516,9 +557,43 @@ async function downloadContent(message) {
 	}
 }
 
+function loadTabData() {
+	return new Promise((resolve, reject) => {
+		webkitRequestFileSystem(TEMPORARY, FS_SIZE, fs => {
+			fs.root.getFile(tabData.tabId, {}, function (fileEntry) {
+				fileEntry.file(data => {
+					data.text()
+						.then(jsonData => {
+							tabData = JSON.parse(jsonData);
+							resolve();
+						})
+						.catch(reject);
+				}, reject);
+			}, reject);
+		}, reject);
+	});
+}
+
+function saveTabData() {
+	return new Promise((resolve, reject) => {
+		const data = JSON.stringify(tabData);
+		webkitRequestFileSystem(TEMPORARY, FS_SIZE, fs => {
+			fs.root.getFile(tabData.tabId, { create: true }, function (fileEntry) {
+				fileEntry.createWriter(function (fileWriter) {
+					fileWriter.onwriteend = () => resolve();
+					fileWriter.onerror = reject;
+					fileWriter.write(new Blob([data], { type: "text/plain" }));
+				}, reject);
+			}, reject);
+		}, reject);
+	});
+}
+
 async function refreshOptions(profileName) {
 	const profiles = await browser.runtime.sendMessage({ method: "config.getProfiles" });
-	tabData.options = profiles[profileName];
+	if (profiles[profileName]) {
+		tabData.options = profiles[profileName];
+	}
 }
 
 function disableEditPage() {
@@ -563,6 +638,7 @@ function enableEditPage() {
 
 function formatPage() {
 	formatPageButton.classList.remove("format-disabled");
+	updatedResources = {};
 	editorElement.contentWindow.postMessage(JSON.stringify({
 		method: "formatPage",
 		applySystemTheme: tabData.options.applySystemTheme,
@@ -572,6 +648,7 @@ function formatPage() {
 
 function cancelFormatPage() {
 	formatPageButton.classList.add("format-disabled");
+	updatedResources = {};
 	editorElement.contentWindow.postMessage(JSON.stringify({ method: "cancelFormatPage" }), "*");
 }
 
@@ -603,8 +680,8 @@ function savePage() {
 		infobarPositionLeft: tabData.options.infobarPositionLeft,
 		infobarPositionRight: tabData.options.infobarPositionRight,
 		backgroundSave: tabData.options.backgroundSave,
+		updatedResources,
 		filename: tabData.filename,
-		foregroundSave: FOREGROUND_SAVE,
 		sharePage: tabData.options.sharePage,
 		labels: {
 			EMBEDDED_IMAGE_BUTTON_MESSAGE,

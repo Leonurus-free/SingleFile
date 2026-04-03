@@ -21,7 +21,7 @@
  *   Source.
  */
 
-/* global browser, URL, Blob */
+/* global browser, fetch */
 
 import * as config from "./config.js";
 import * as business from "./business.js";
@@ -29,11 +29,9 @@ import * as companion from "./companion.js";
 import * as downloads from "./downloads.js";
 import * as tabsData from "./tabs-data.js";
 import * as ui from "./../../ui/bg/index.js";
-import { getPageData } from "./../../index.js";
 import * as woleet from "./../../lib/woleet/woleet.js";
 import { autoSaveIsEnabled } from "./autosave-util.js";
-import { enableReferrerOnError } from "./requests.js";
-import { fetchResource } from "./../../lib/single-file/fetch/bg/fetch.js";
+import * as offscreen from "./offscreen.js";
 
 const pendingMessages = {};
 const replacedTabIds = {};
@@ -143,6 +141,7 @@ async function saveContent(message, tab) {
 		options.usedFonts = message.usedFonts;
 		options.shadowRoots = message.shadowRoots;
 		options.referrer = message.referrer;
+		options.updatedResources = message.updatedResources;
 		options.worklets = message.worklets;
 		options.adoptedStyleSheets = message.adoptedStyleSheets;
 		options.visitDate = new Date(message.visitDate);
@@ -156,59 +155,52 @@ async function saveContent(message, tab) {
 			if (options.autoSaveExternalSave) {
 				await companion.externalSave(options);
 			} else {
-				if (options.passReferrerOnError) {
-					enableReferrerOnError();
-				}
-			options.tabId = tabId;
-			pageData = await getPageData(options, { fetch }, null, null);
-			let skipped;
-			if (!options.saveToGDrive && !options.saveWithWebDAV && !options.saveWithMCP && !options.saveToGitHub && !options.saveToDropbox && !options.saveWithCompanion && !options.saveToRestFormApi && !options.saveToS3) {
-				const testSkip = await downloads.testSkipSave(pageData.filename, options);
+				pageData = await offscreen.processPage(options);
+				let skipped;
+				if (!options.saveToGDrive && !options.saveWithWebDAV && !options.saveWithMCP && !options.saveToGitHub && !options.saveToDropbox && !options.saveWithCompanion && !options.saveToRestFormApi && !options.saveToS3) {
+					const testSkip = await downloads.testSkipSave(pageData.filename, options);
 					skipped = testSkip.skipped;
 					options.filenameConflictAction = testSkip.filenameConflictAction;
 				}
 				if (!skipped) {
-					let { content, mimeType: type } = pageData;
-					if (options.compressContent) {
-						content = new Blob([new Uint8Array(content)], { type });
-					}
 					if (options.saveToGDrive) {
-						if (!(content instanceof Blob)) {
-							content = new Blob([content], { type });
-						}
-						await downloads.saveToGDrive(message.taskId, downloads.encodeSharpCharacter(pageData.filename), content, options, {
+						const content = await (await fetch(pageData.url)).blob();
+						await downloads.saveToGDrive(message.taskId, downloads.encodeSharpCharacter(pageData.filename), content, {
 							forceWebAuthFlow: options.forceWebAuthFlow
 						}, {
 							filenameConflictAction: options.filenameConflictAction
 						});
-					} if (options.saveToDropbox) {
-						if (!(content instanceof Blob)) {
-							content = new Blob([content], { type });
-						}
+					} else if (options.saveToDropbox) {
+						const content = await (await fetch(pageData.url)).blob();
 						await downloads.saveToDropbox(message.taskId, downloads.encodeSharpCharacter(pageData.filename), content, {
 							filenameConflictAction: options.filenameConflictAction
 						});
 					} else if (options.saveWithWebDAV) {
+						const content = await (await fetch(pageData.url)).blob();
 						await downloads.saveWithWebDAV(message.taskId, downloads.encodeSharpCharacter(pageData.filename), content, options.webDAVURL, options.webDAVUser, options.webDAVPassword, {
 							filenameConflictAction: options.filenameConflictAction
 						});
 					} else if (options.saveWithMCP) {
+						const content = await (await fetch(pageData.url)).blob();
 						await downloads.saveWithMCP(message.taskId, downloads.encodeSharpCharacter(pageData.filename), content, options.mcpServerUrl, options.mcpAuthToken, {
 							filenameConflictAction: options.filenameConflictAction
 						});
 					} else if (options.saveToGitHub) {
+						const content = await (await fetch(pageData.url)).blob();
 						await (await downloads.saveToGitHub(message.taskId, downloads.encodeSharpCharacter(pageData.filename), content, options.githubToken, options.githubUser, options.githubRepository, options.githubBranch, {
 							filenameConflictAction: options.filenameConflictAction
 						})).pushPromise;
 					} else if (options.saveWithCompanion && !options.compressContent) {
+						const content = await (await fetch(pageData.url)).text();
 						await companion.save({
 							filename: pageData.filename,
-							content: pageData.content,
+							content: content,
 							title: pageData.title,
 							url: options.url,
 							filenameConflictAction: options.filenameConflictAction
 						});
 					} else if (options.saveToRestFormApi) {
+						const content = await (await fetch(pageData.url)).blob();
 						await downloads.saveToRestFormApi(
 							message.taskId,
 							pageData.filename,
@@ -220,9 +212,7 @@ async function saveContent(message, tab) {
 							options.saveToRestFormApiUrlFieldName
 						);
 					} else if (options.saveToS3) {
-						if (!(content instanceof Blob)) {
-							content = new Blob([content], { type });
-						}
+						const content = await (await fetch(pageData.url)).blob();
 						await downloads.saveToS3(
 							message.taskId,
 							pageData.filename,
@@ -235,14 +225,10 @@ async function saveContent(message, tab) {
 							{ filenameConflictAction: options.filenameConflictAction }
 						);
 					} else {
-						if (!(content instanceof Blob)) {
-							content = new Blob([content], { type });
-						}
-						pageData.url = URL.createObjectURL(content);
 						await downloads.downloadPage(pageData, options);
 					}
 					if (options.openSavedPage) {
-						const createTabProperties = { active: true, url: "/src/ui/pages/viewer.html?compressed=true&blobURI=" + URL.createObjectURL(content), windowId: tab.windowId };
+						const createTabProperties = { active: true, url: "/src/ui/pages/viewer.html?compressed=true&blobURI=" + pageData.url, windowId: tab.windowId };
 						const index = tab.index;
 						try {
 							await browser.tabs.get(tabId);
@@ -265,21 +251,10 @@ async function saveContent(message, tab) {
 				browser.tabs.remove(replacedTabIds[tabId] || tabId);
 				delete replacedTabIds[tabId];
 			}
-			if (pageData && pageData.url) {
-				URL.revokeObjectURL(pageData.url);
+			if (pageData && pageData.url && !options.openSavedPage) {
+				offscreen.revokeObjectURL(pageData.url);
 			}
 			ui.onEnd(tabId, true);
 		}
 	}
-}
-
-async function fetch(url, options = {}) {
-	const response = await fetchResource(url, options);
-	return {
-		status: response.status,
-		headers: {
-			get: name => response.headers[name]
-		},
-		arrayBuffer: () => response.arrayBuffer
-	};
 }

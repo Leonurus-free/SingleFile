@@ -39,7 +39,7 @@ export {
 	EDITOR_URL
 };
 
-async function open({ tabIndex, content, filename, compressContent, selfExtractingArchive, extractDataFromPage, insertTextBody, insertMetaCSP, embeddedImage, url }) {
+async function open({ tabIndex, content, filename, compressContent, selfExtractingArchive, disableCompression, extractDataFromPage, insertTextBody, insertMetaCSP, embeddedImage, url }) {
 	const createTabProperties = { active: true, url: EDITOR_PAGE_URL };
 	if (tabIndex != null) {
 		createTabProperties.index = tabIndex;
@@ -51,6 +51,7 @@ async function open({ tabIndex, content, filename, compressContent, selfExtracti
 		filename,
 		compressContent,
 		selfExtractingArchive,
+		disableCompression,
 		extractDataFromPage,
 		insertTextBody,
 		insertMetaCSP,
@@ -60,6 +61,7 @@ async function open({ tabIndex, content, filename, compressContent, selfExtracti
 
 function onTabRemoved(tabId) {
 	tabsData.delete(tabId);
+	partialContents.delete(tabId);
 }
 
 function isEditor(tab) {
@@ -76,7 +78,9 @@ async function onMessage(message, sender) {
 			for (let blockIndex = 0; blockIndex * MAX_CONTENT_SIZE < content.length; blockIndex++) {
 				const message = {
 					method: "editor.setTabData",
-					compressContent: tabData.compressContent
+					compressContent: tabData.compressContent,
+					tabId: tab.id,
+					url: tabData.url
 				};
 				message.truncated = content.length > MAX_CONTENT_SIZE;
 				if (message.truncated) {
@@ -92,6 +96,12 @@ async function onMessage(message, sender) {
 				}
 				await browser.tabs.sendMessage(tab.id, message);
 			}
+		} else {
+			const message = {
+				method: "editor.setTabData",
+				tabId: tab.id
+			};
+			await browser.tabs.sendMessage(tab.id, message);
 		}
 		return {};
 	}
@@ -121,6 +131,7 @@ async function onMessage(message, sender) {
 				filename: message.filename,
 				compressContent: message.compressContent,
 				selfExtractingArchive: message.selfExtractingArchive,
+				disableCompression: message.disableCompression,
 				extractDataFromPageTags: message.extractDataFromPageTags,
 				insertTextBody: message.insertTextBody,
 				insertMetaCSP: message.insertMetaCSP,

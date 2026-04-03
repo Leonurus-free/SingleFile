@@ -161,7 +161,9 @@ async function savePage(message) {
 		selectionFound = await ui.markSelection(options.optionallySelected);
 	}
 	if (!processing && (!bootstrap || !bootstrap.pageInfo.processing)) {
+		options.updatedResources = bootstrap ? bootstrap.pageInfo.updatedResources : {};
 		options.visitDate = bootstrap ? bootstrap.pageInfo.visitDate : new Date();
+		Object.keys(options.updatedResources).forEach(url => options.updatedResources[url].retrieved = false);
 		if (options.optionallySelected && selectionFound) {
 			options.selected = true;
 		}
@@ -176,19 +178,20 @@ async function savePage(message) {
 					await download.downloadPage(pageData, options);
 				}
 			} catch (error) {
-				if (!processor.cancelled) {
+				if (!processor || !processor.cancelled) {
 					console.error(error); // eslint-disable-line no-console
 					const errorMessage = error && (error.message || error.toString());
 					browser.runtime.sendMessage({ method: "ui.processError", error: errorMessage });
 					onError(errorMessage);
 				}
+			} finally {
+				processing = false;
+				if (bootstrap) {
+					bootstrap.pageInfo.processing = false;
+				}
 			}
 		} else {
 			browser.runtime.sendMessage({ method: "ui.processCancelled" });
-		}
-		processing = false;
-		if (bootstrap) {
-			bootstrap.pageInfo.processing = false;
 		}
 	}
 	clearInterval(pingInterval);
