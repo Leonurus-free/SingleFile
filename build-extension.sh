@@ -25,25 +25,25 @@ npm update
 
 cp package.json package.copy.json
 jq 'del(.dependencies."single-file-cli")' package.copy.json > package.json
-zip -r singlefile-extension-source.zip manifest.json package.json _locales src rollup*.js .eslintrc.js build-extension.sh
+zip -r 沧澜-extension-source.zip manifest.json package.json _locales src rollup*.js .eslintrc.js build-extension.sh
 mv package.copy.json package.json
 
-rm -f singlefile-extension-firefox.zip
-rm -f singlefile-extension-chrome.zip
+rm -f 沧澜-extension-firefox.zip
+rm -f 沧澜-extension-chrome.zip
 
 cp src/core/bg/config.js config.copy.js
 cp src/core/bg/companion.js companion.copy.js
 sed -i 's/forceWebAuthFlow: false/forceWebAuthFlow: true/g' src/core/bg/config.js
 sed -i 's/enabled: true/enabled: false/g' src/core/bg/companion.js
-zip -r singlefile-extension-firefox.zip manifest.json lib _locales src
+zip -r 沧澜-extension-firefox.zip manifest.json lib _locales src
 mv config.copy.js src/core/bg/config.js
 mv companion.copy.js src/core/bg/companion.js
 
 echo "Building Chrome extension..."
-zip -r singlefile-extension-chrome.zip manifest.json lib _locales src
+zip -r 沧澜-extension-chrome.zip manifest.json lib _locales src
 
 echo ""
 echo "Build completed!"
-echo "- Firefox: singlefile-extension-firefox.zip"
-echo "- Chrome:  singlefile-extension-chrome.zip"
-echo "- Source:  singlefile-extension-source.zip"
+echo "- Firefox: 沧澜-extension-firefox.zip"
+echo "- Chrome:  沧澜-extension-chrome.zip"
+echo "- Source:  沧澜-extension-source.zip"
